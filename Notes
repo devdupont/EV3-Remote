@@ -1,6 +1,6 @@
 To compile:
 
-javac -classpath ev3classes/ev3classes.jar file.java
+javac -classpath ev3classes.jar file.java
 
 To move to EV3:
 
