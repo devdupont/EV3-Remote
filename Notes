@@ -1,0 +1,11 @@
+To compile:
+
+javac -classpath ev3classes/ev3classes.jar file.java
+
+To move to EV3:
+
+sudo cp file.java /media/<username>/LMS2012_EXT/home/root/lejos/programs
+
+OR via LAN/WLAN
+
+scp motor.class root@10.0.1.1:/home/root/lejos/samples/motor.class
