@@ -1,6 +1,10 @@
 EV3-Remote
 ===
 
+---
+
+2013-11-21
+
 Michael duPont - flyinactor91.com
 
 Controller-robot system for the Lego Mindstorms EV3 running Lejos
@@ -15,8 +19,9 @@ Available Commands:
 
 	Forward: 	F distance<int> (serial<def=Y /N>)
 	Backward: 	B distance<int> (serial<def=Y /N>)
-	Left:		L degree<int> (serial< def=Y/N>)
-	Right:		R degree<int> (serial< def=Y/N>)
+	Left:		L degree<int> (serial< def=Y /N>)
+	Right:		R degree<int> (serial< def=Y /N>)
+	Servo:		S degree<int +/->
 	Pause:		P duration-ms<int>
 	LED Disp:	LED pattern<int 0-9>
 	Volume:		VOL percent<int 0-100>	#Buzzer/TONE doesn't work if volume less than 8%
@@ -24,7 +29,7 @@ Available Commands:
 	Beep:		BEEP pattern<int 1-5>
 	Quit:		QUIT
 
-Example: F 1000 Y;LED 8;P 2000;L 220;B 300;BEEP 5;QUIT
+Example: F 1000 N;LED 8;S 300;P 2000;L 220;B 300;S -300;BEEP 5;QUIT
 
 Notes:
 

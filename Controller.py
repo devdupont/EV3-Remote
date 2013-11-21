@@ -1,54 +1,67 @@
-#!/usr/bin/env python++
+#!/usr/bin/env python
+
+##--Michael duPont - flyinactor91.com
+##--Control hub for multiple robots/clients
+##--EV3-Remote - https://github.com/flyinactor91/EV3-Remote
+
+##--2013-11-21
  
 import socket
 
 def main():
-	host = '192.168.42.11'
+	host = ('192.168.42.11','192.168.42.12','192.168.42.13','localhost')
 	port = 5678
 	cueNum = 0
 	lastCue = -1
 	
-	cueList = [ 'F 100',				#Init Robot
-				'F 500;LED 1',			#First Cue
-				'R 220 Y;LED 2',		
-				'L 220;LED 3',
-				'B 500;LED 0',			#Final Que
-				'QUIT' ]				#End Program
+	##--Ex Cue: [ (0 , 'F 500;LED 4') , (2 , 'L 400;BEEP 4') ]
+	cueList = [ [ (0 , 'F 100 N;S 100') ] ,								#Init Robot
+				[ (0 , 'F 500;LED 1') ],								#First Cue
+				[ (0 , 'R 220 N;LED 2') ],
+				[ (0 , 'BEEP 4;S 500;P 2000;S -500;BEEP 5') ],
+				[ (0 , 'L 220;LED 3') ],
+				[ (0 , 'B 500;LED 0') ],								#Final Que
+				[ (0,'QUIT') ]											#End Program
+			  ]
 	
-	quitFlag = True
-	while quitFlag:
+	#Alter the values to reflect the number of clients according to index in 'host'
+	quitFlag = [True , False , False , False]
+	while quitFlag[0] or quitFlag[1] or quitFlag[2] or quitFlag[3]:		#Exits once all clients have QUIT
 		
 		##--Get command--##
-		if cueNum != len(cueList): print '\nNext cue #' + str(cueNum) + '\t' + cueList[cueNum]
-		command = raw_input('Last: '+str(lastCue)+'  Next: ')
+		if cueNum != len(cueList): print '\nNext cue #' + str(cueNum) + '\t' + str(cueList[cueNum])
+		cue = raw_input('Last: '+str(lastCue)+'  Next: ')
 		
-		if command.isdigit(): cueNum = int(command)
+		if cue.isdigit(): cueNum = int(cue)
 		
 		if not (-1 < cueNum < len(cueList)):
 			print 'Cue is out of bounds. Reverting to last cue'
 			cueNum = lastCue+1
 		else:
-			if (command.find('QUIT') != -1) or (cueList[cueNum].find('QUIT') != -1): quitFlag = False
-			
-			##--Create socket--##
-			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			sock.connect((host, port))
-			
-			##--Send and Recieve--##		
-			if (command == '') or (command.isdigit()):				
-				sock.send(cueList[cueNum]+'\n')
-				print str(cueNum)+': '+cueList[cueNum]
-			else:
-				sock.send(command+'\n')
-				print command
-			ret = sock.recv(1024)
-			print ret
-			
-			##--Close Socket--##
-			sock.close()
+			for tup in cueList[cueNum]:
+				recvr = int(tup[0])
+				command = tup[1]
+				if ((type(cue) == type("")) and (cue.find('QUIT') != -1)) or (command.find('QUIT') != -1): quitFlag[recvr] = False
+				
+				##--Create socket--##
+				sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+				sock.connect((host[recvr], port))
+				
+				##--Send and Recieve--##		
+				if (cue == '') or (cue.isdigit()):				
+					sock.send(command+'\n')
+					print str(cueNum)+' to '+str(recvr)+': '+command
+				else:
+					sock.send(cue+'\n')
+					print cue
+				ret = sock.recv(1024)
+				print ret
+				
+				##--Close Socket--##
+				sock.close()
 			
 			##--Update queNums--##
-			if (command == '') or (command.isdigit()):
+			if (cue == '') or (cue.isdigit()):
 				lastCue = cueNum
 				cueNum += 1
 

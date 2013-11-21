@@ -9,16 +9,20 @@ import lejos.util.Delay;
 
 /*
  * Michael duPont - flyinactor91.com
+ * EV3-Remote - https://github.com/flyinactor91/EV3-Remote
  * Generic robot client
  * Lejos 0.4.0-alpha running on EV3
+ * 
+ * 2013-11-21
  * 
  * Connects to controller via socket
  * Commands separated by ';'
  * Available Commands:
  * 		Forward: 	F distance<int> (serial<def=Y /N>)
  * 		Backward: 	B distance<int> (serial<def=Y /N>)
- * 		Left:		L degree<int> (serial< def=Y/N>)
- * 		Right:		R degree<int> (serial< def=Y/N>)
+ * 		Left:		L degree<int> (serial< def=Y /N>)
+ * 		Right:		R degree<int> (serial< def=Y /N>)
+ * 		Servo:		S degree<int +/->
  * 		Pause:		P duration-ms<int>
  * 		LED Disp:	LED pattern<int 0-9>
  * 		Volume:		VOL percent<int 0-100>					#Buzzer/TONE doesn't work if volume less than 8%
@@ -26,7 +30,7 @@ import lejos.util.Delay;
  * 		Beep:		BEEP pattern<int 1-5>
  * 		Quit:		QUIT
  * 
- * Example: F 1000 N;R 90 N;P 2000;L 90 N;B 1000 N;QUIT
+ * Example: F 1000 N;LED 8;S 300;P 2000;L 220;B 300;S -300;BEEP 5;QUIT
  * 
  * Notes:
  * 		LED patterns:
@@ -78,6 +82,14 @@ class Robot {
 		int BPos = Motor.B.getTachoCount();
 		Motor.A.rotateTo(APos + unit , true);
 		Motor.B.rotateTo(BPos - unit , serial);
+	}
+	
+	public static void Servo(int unit , boolean serial) {
+		System.out.println("Servo " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
+		LCD.clear();
+		LCD.drawString("Servo", 0, 0);
+		int CPos = Motor.C.getTachoCount();
+		Motor.C.rotateTo(CPos + unit , serial);
 	}
 	
     public static void main(String args[]) throws Exception {
@@ -135,6 +147,12 @@ class Robot {
 					case "R":
 						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Right(Integer.parseInt(subCommand[1]) , true);
 						else Right(Integer.parseInt(subCommand[1]) , false);
+						break;
+					
+					//Servo
+					case "S":
+						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Servo(Integer.parseInt(subCommand[1]) , true);
+						else Servo(Integer.parseInt(subCommand[1]) , false);
 						break;
 					
 					//Pause
