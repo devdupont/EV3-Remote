@@ -23,6 +23,7 @@ import lejos.util.Delay;
  * 		Left:		L degree<int> (serial< def=Y /N>)
  * 		Right:		R degree<int> (serial< def=Y /N>)
  * 		Servo:		S degree<int +/->
+ * 		MotorSpd:	MS motor<M/S> speed<int>				#Main (A and B) / Servo (C)
  * 		Pause:		P duration-ms<int>
  * 		LED Disp:	LED pattern<int 0-9>
  * 		Volume:		VOL percent<int 0-100>					#Buzzer/TONE doesn't work if volume less than 8%
@@ -102,7 +103,8 @@ class Robot {
         System.out.println("Running...");
 		LCD.drawString("Robot Slave", 0, 0);
 		Motor.A.setSpeed(360);
-		Motor.B.setSpeed(360);        
+		Motor.B.setSpeed(360);
+		Motor.C.setSpeed(360);
         ServerSocket server = new ServerSocket(port);
         System.out.println("Wait for connection on port " + Integer.toString(port));
         
@@ -116,6 +118,7 @@ class Robot {
             
             //Read in and split command line
             stringIn = in.readLine();
+            stringIn = stringIn.trim();
             System.out.println("received: " + stringIn);
             out.println("Executing: " + stringIn);
             commands = stringIn.split(";");
@@ -153,6 +156,18 @@ class Robot {
 					case "S":
 						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Servo(Integer.parseInt(subCommand[1]) , true);
 						else Servo(Integer.parseInt(subCommand[1]) , false);
+						break;
+					
+					//Set Motor Speed
+					case "MS":
+						System.out.println("Set motor " + subCommand[1] + " to " + subCommand[2]);
+						LCD.clear();
+						LCD.drawString("Motor " + subCommand[1] + " " + subCommand[2] , 0, 0);
+						if (subCommand[1].equals("M")) {
+							Motor.A.setSpeed(Integer.parseInt(subCommand[2]));
+							Motor.B.setSpeed(Integer.parseInt(subCommand[2]));
+						}
+						if (subCommand[1].equals("S")) Motor.C.setSpeed(Integer.parseInt(subCommand[2]));
 						break;
 					
 					//Pause

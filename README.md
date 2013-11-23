@@ -11,6 +11,10 @@ Controller-robot system for the Lego Mindstorms EV3 running Lejos
 
 Lejos 0.4.0-alpha running on EV3
 
+The default setup is a Left (A) and Right (B) motor with a third motor or servo (C)
+
+This code does not have any sensors
+
 ---
 
 Commands separated by ';'
@@ -22,9 +26,10 @@ Available Commands:
 	Left:		L degree<int> (serial< def=Y /N>)
 	Right:		R degree<int> (serial< def=Y /N>)
 	Servo:		S degree<int +/->
+	Motor Speed:	MS motor<M/S> speed<int> #Main (A and B) / Servo (C)
 	Pause:		P duration-ms<int>
 	LED Disp:	LED pattern<int 0-9>
-	Volume:		VOL percent<int 0-100>	#Buzzer/TONE doesn't work if volume less than 8%
+	Volume:		VOL percent<int 0-100> #Buzzer/TONE doesn't work if volume less than 8%
 	Tone:		TONE freq-Hz<int> duration-ms<int>
 	Beep:		BEEP pattern<int 1-5>
 	Quit:		QUIT
