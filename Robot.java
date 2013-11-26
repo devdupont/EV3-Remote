@@ -4,6 +4,7 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
 import lejos.nxt.Sound;
+import lejos.nxt.LocalBattery;
 import lejos.util.Delay;
 
 
@@ -18,17 +19,21 @@ import lejos.util.Delay;
  * Connects to controller via socket
  * Commands separated by ';'
  * Available Commands:
+ *   Motors
  * 		Forward: 	F distance<int> (serial<def=Y /N>)
  * 		Backward: 	B distance<int> (serial<def=Y /N>)
  * 		Left:		L degree<int> (serial< def=Y /N>)
  * 		Right:		R degree<int> (serial< def=Y /N>)
  * 		Servo:		S degree<int +/->
  * 		MotorSpd:	MS motor<M/S> speed<int>				#Main (A and B) / Servo (C)
- * 		Pause:		P duration-ms<int>
- * 		LED Disp:	LED pattern<int 0-9>
+ *	 Sound
  * 		Volume:		VOL percent<int 0-100>					#Buzzer/TONE doesn't work if volume less than 8%
  * 		Tone:		TONE freq-Hz<int> duration-ms<int>
  * 		Beep:		BEEP pattern<int 1-5>
+ * 	 Utils
+ * 		Pause:		P duration-ms<int>
+ * 		LED Disp:	LED pattern<int 0-9>
+ * 		Battery:	BAT										#Displays the battery level
  * 		Quit:		QUIT
  * 
  * Example: F 1000 N;LED 8;S 300;P 2000;L 220;B 300;S -300;BEEP 5;QUIT
@@ -101,7 +106,7 @@ class Robot {
         
         //Init Robot
         System.out.println("Running...");
-		LCD.drawString("Robot Slave", 0, 0);
+		LCD.drawString("EV3-Remote", 0, 0);
 		Motor.A.setSpeed(360);
 		Motor.B.setSpeed(360);
 		Motor.C.setSpeed(360);
@@ -212,6 +217,15 @@ class Robot {
 						else if (subCommand[1].equals("3")) Sound.buzz();
 						else if (subCommand[1].equals("4")) Sound.beepSequenceUp();
 						else if (subCommand[1].equals("5")) Sound.beepSequence();
+						break;
+					
+					//Ger battery voltage
+					case "BAT":
+						LocalBattery battery = new LocalBattery();
+						String volt = Float.toString(battery.getVoltage());
+						System.out.println("Voltage: " + volt + " / 9.0");
+						LCD.clear();
+						LCD.drawString("Volt " + volt , 0, 0);
 						break;
 					
 					//Quit program
