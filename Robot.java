@@ -14,27 +14,28 @@ import lejos.util.Delay;
  * Generic robot client
  * Lejos 0.4.0-alpha running on EV3
  * 
- * 2013-11-21
+ * 2013-11-26
  * 
  * Connects to controller via socket
  * Commands separated by ';'
  * Available Commands:
- *   Motors
- * 		Forward: 	F distance<int> (serial<def=Y /N>)
- * 		Backward: 	B distance<int> (serial<def=Y /N>)
- * 		Left:		L degree<int> (serial< def=Y /N>)
- * 		Right:		R degree<int> (serial< def=Y /N>)
- * 		Servo:		S degree<int +/->
- * 		MotorSpd:	MS motor<M/S> speed<int>				#Main (A and B) / Servo (C)
- *	 Sound
- * 		Volume:		VOL percent<int 0-100>					#Buzzer/TONE doesn't work if volume less than 8%
- * 		Tone:		TONE freq-Hz<int> duration-ms<int>
- * 		Beep:		BEEP pattern<int 1-5>
- * 	 Utils
- * 		Pause:		P duration-ms<int>
- * 		LED Disp:	LED pattern<int 0-9>
- * 		Battery:	BAT										#Displays the battery level
- * 		Quit:		QUIT
+ * 		Motors
+ * 			Forward: 	F distance<int> (serial<def=Y /N>)
+ * 			Backward: 	B distance<int> (serial<def=Y /N>)
+ * 			Left:		L degree<int> (serial< def=Y /N>)
+ * 			Right:		R degree<int> (serial< def=Y /N>)
+ * 			Servo:		S degree<int +/->
+ * 			MotorSpd:	MS motor<M/S> speed<int>				#Main (A and B) / Servo (C)
+ *		Sound
+ * 			Volume:		VOL percent<int 0-100>					#Buzzer/TONE doesn't work if volume less than 8%
+ * 			Tone:		TONE freq-Hz<int> duration-ms<int>
+ * 			Beep:		BEEP pattern<int 1-5>
+ * 			Song:		WAV song<*.wav>							#Song.wav location
+ *		Utils
+ * 			Pause:		P duration-ms<int>
+ * 			LED Disp:	LED pattern<int 0-9>
+ * 			Battery:	BAT										#Displays the battery level (terminal/LCD)
+ * 			Quit:		QUIT
  * 
  * Example: F 1000 N;LED 8;S 300;P 2000;L 220;B 300;S -300;BEEP 5;QUIT
  * 
@@ -50,10 +51,16 @@ import lejos.util.Delay;
 
 class Robot {
 	
+	static Boolean toLCD = true;
+	
+	public static void printToLCD(String txt) {
+		LCD.clear();
+		LCD.drawString(txt , 0 , 0);
+	}
+	
 	public static void Forward(int unit , boolean serial) {
 		System.out.println("Forward " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
-		LCD.clear();
-		LCD.drawString("Forward", 0, 0);
+		if (toLCD) printToLCD("Forward");
 		int APos = Motor.A.getTachoCount();
 		int BPos = Motor.B.getTachoCount();
 		Motor.A.rotateTo(APos + unit , true);
@@ -62,8 +69,7 @@ class Robot {
 	
 	public static void Backward(int unit , boolean serial) {
 		System.out.println("Backward " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
-		LCD.clear();
-		LCD.drawString("Backward", 0, 0);
+		if (toLCD) printToLCD("Backward");
 		int APos = Motor.A.getTachoCount();
 		int BPos = Motor.B.getTachoCount();
 		Motor.A.rotateTo(APos - unit , true);
@@ -72,8 +78,7 @@ class Robot {
 	
 	public static void Left(int unit , boolean serial) {
 		System.out.println("Left " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
-		LCD.clear();
-		LCD.drawString("Left", 0, 0);
+		if (toLCD) printToLCD("Left");
 		int APos = Motor.A.getTachoCount();
 		int BPos = Motor.B.getTachoCount();
 		Motor.A.rotateTo(APos - unit , true);
@@ -82,8 +87,7 @@ class Robot {
 	
 	public static void Right(int unit , boolean serial) {
 		System.out.println("Right " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
-		LCD.clear();
-		LCD.drawString("Right", 0, 0);
+		if (toLCD) printToLCD("Right");
 		int APos = Motor.A.getTachoCount();
 		int BPos = Motor.B.getTachoCount();
 		Motor.A.rotateTo(APos + unit , true);
@@ -92,13 +96,12 @@ class Robot {
 	
 	public static void Servo(int unit , boolean serial) {
 		System.out.println("Servo " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
-		LCD.clear();
-		LCD.drawString("Servo", 0, 0);
+		if (toLCD) printToLCD("Servo");
 		int CPos = Motor.C.getTachoCount();
 		Motor.C.rotateTo(CPos + unit , serial);
 	}
 	
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) throws IOException {
         String stringIn;
         String[] commands , subCommand;
         int APos , BPos;
@@ -124,8 +127,8 @@ class Robot {
             //Read in and split command line
             stringIn = in.readLine();
             stringIn = stringIn.trim();
-            System.out.println("received: " + stringIn);
-            out.println("Executing: " + stringIn);
+            System.out.println("\nreceived: " + stringIn);
+            out.println("Executing: " + stringIn + "\n");
             commands = stringIn.split(";");
             
             //Run swith for each command
@@ -166,8 +169,7 @@ class Robot {
 					//Set Motor Speed
 					case "MS":
 						System.out.println("Set motor " + subCommand[1] + " to " + subCommand[2]);
-						LCD.clear();
-						LCD.drawString("Motor " + subCommand[1] + " " + subCommand[2] , 0, 0);
+						if (toLCD) printToLCD("Motor " + subCommand[1] + " " + subCommand[2]);
 						if (subCommand[1].equals("M")) {
 							Motor.A.setSpeed(Integer.parseInt(subCommand[2]));
 							Motor.B.setSpeed(Integer.parseInt(subCommand[2]));
@@ -178,45 +180,51 @@ class Robot {
 					//Pause
 					case "P":
 						System.out.println("Pause " + subCommand[1] + " ms");
-						LCD.clear();
-						LCD.drawString("Pause", 0, 0);
+						if (toLCD) printToLCD("Pause");
 						Delay.msDelay(Long.parseLong(subCommand[1]));
 						break;
 					
 					//LED
 					case "LED":
 						System.out.println("LED pattern " + subCommand[1]);
-						LCD.clear();
-						LCD.drawString("LED " + subCommand[1] , 0, 0);
+						if (toLCD) printToLCD("LED " + subCommand[1]);
 						Button.LEDPattern(Integer.parseInt(subCommand[1]));
 						break;
 					
 					//Set Master Volume
 					case "VOL":
 						System.out.println("Set volume: " + subCommand[1]);
-						LCD.clear();
-						LCD.drawString("Volume " + subCommand[1] , 0, 0);
+						if (toLCD) printToLCD("Volume " + subCommand[1]);
 						Sound.setVolume(Integer.parseInt(subCommand[1]));
 						break;
 					
 					//Tone
 					case "TONE":
 						System.out.println("Tone Freq: " + subCommand[1] + " Duration: " + subCommand[2]);
-						LCD.clear();
-						LCD.drawString("Tone " + subCommand[1] , 0, 0);
+						if (toLCD) printToLCD("Tone " + subCommand[1]);
 						Sound.playTone(Integer.parseInt(subCommand[1]) , Integer.parseInt(subCommand[2]));
 						break;
 					
 					//Beep
 					case "BEEP":
 						System.out.println("Beep Type: " + subCommand[1]);
-						LCD.clear();
-						LCD.drawString("Beep " + subCommand[1] , 0, 0);
+						if (toLCD) printToLCD("Beep " + subCommand[1]);
 						if (subCommand[1].equals("1")) Sound.beep();
 						else if (subCommand[1].equals("2")) Sound.twoBeeps();
 						else if (subCommand[1].equals("3")) Sound.buzz();
 						else if (subCommand[1].equals("4")) Sound.beepSequenceUp();
 						else if (subCommand[1].equals("5")) Sound.beepSequence();
+						else System.out.println("Invalid BEEP value");
+						break;
+					
+					//Song
+					case "WAV":
+						System.out.println("Song: " + subCommand[1]);
+						if (toLCD) printToLCD("Song " + subCommand[1]);
+						File song = new File(subCommand[1]);
+						if(song.exists()) {Sound.playSample(song);}
+						//Sound.playSample(new File("halsorry.wav"));
+						else System.out.println("File not found " + subCommand[1]);
 						break;
 					
 					//Ger battery voltage
@@ -224,8 +232,7 @@ class Robot {
 						LocalBattery battery = new LocalBattery();
 						String volt = Float.toString(battery.getVoltage());
 						System.out.println("Voltage: " + volt + " / 9.0");
-						LCD.clear();
-						LCD.drawString("Volt " + volt , 0, 0);
+						if (toLCD) printToLCD("Volt " + volt);
 						break;
 					
 					//Quit program

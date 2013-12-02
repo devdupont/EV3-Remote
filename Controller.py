@@ -4,7 +4,7 @@
 ##--Control hub for multiple robots/clients
 ##--EV3-Remote - https://github.com/flyinactor91/EV3-Remote
 
-##--2013-11-21
+##--2013-11-26
 
 import socket , os
 
@@ -25,25 +25,33 @@ cueList = [ [ (0 , 'F 100 N;S 100') ] ,								#Init Robot
 			[ (0 , 'BEEP 4;S 500;P 2000;S -500;BEEP 5') ],
 			[ (0 , 'L 220;LED 3') ],
 			[ (0 , 'B 500;LED 0') ],								#Final Que
-			[ (0,'QUIT') ]											#End Program
+			[ (0 , 'QUIT') ]											#End Program
 		  ]
+
+showCues = [[ (0 , 'F 100 N;S 100') ],
+			[ (0 , 'LED 8;MS M 100;F 1000;P 1000; BEEP 5;P 1000;LED 0') ],
+			[ (0 , 'QUIT') ]
+		   ]
 
 
 def sendDATA(recvr , command):
 	global cueNum
-	#Create socket
-	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.connect((host[recvr], port))
-	#Send command
-	sock.send(command+'\n')
-	print "Cue "+str(cueNum)+' to '+str(recvr)+': '+command
-	#Recv confirmation
-	ret = sock.recv(1024)
-	if ret.find("\n") != -1: print ret[:ret.find("\n")]
-	else: print ret
-	#Close socket
-	sock.close()
-
+	try:
+		#Create socket
+		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		sock.connect((host[recvr], port))
+		#Send command
+		sock.send(command+'\n')
+		print "Cue "+str(cueNum)+' to '+str(recvr)+': '+command
+		#Recv confirmation
+		ret = sock.recv(1024)
+		if ret.find("\n") != -1: print ret[:ret.find("\n")]
+		else: print ret
+		#Close socket
+		sock.close()
+	#Catch communication errors
+	except Exception , e:
+		print 'Error: ' + str(e)[str(e).find(']')+1:]
 
 #Send cue from cueList to selected recvr. Returns None.
 #If cue contains "QUIT", sets recvr's quitFlag to False
