@@ -14,7 +14,7 @@ import lejos.util.Delay;
  * Generic robot client
  * Lejos 0.4.0-alpha running on EV3
  * 
- * 2013-11-26
+ * 2013-12-01
  * 
  * Connects to controller via socket
  * Commands separated by ';'

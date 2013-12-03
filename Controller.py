@@ -4,11 +4,11 @@
 ##--Control hub for multiple robots/clients
 ##--EV3-Remote - https://github.com/flyinactor91/EV3-Remote
 
-##--2013-11-26
+##--2013-12-03
 
 import socket , os
 
-host = ('192.168.42.11','192.168.42.12','192.168.42.13','localhost')
+host = ('192.168.42.11','192.168.42.17','192.168.42.13','localhost')
 
 #Alter the values to reflect the number of clients according to index in 'host'
 quitFlag = [True , False , False , False]
@@ -25,7 +25,7 @@ cueList = [ [ (0 , 'F 100 N;S 100') ] ,								#Init Robot
 			[ (0 , 'BEEP 4;S 500;P 2000;S -500;BEEP 5') ],
 			[ (0 , 'L 220;LED 3') ],
 			[ (0 , 'B 500;LED 0') ],								#Final Que
-			[ (0 , 'QUIT') ]											#End Program
+			[ (0 , 'QUIT') ]										#End Program
 		  ]
 
 showCues = [[ (0 , 'F 100 N;S 100') ],
@@ -69,18 +69,20 @@ def sendCue(cueNum):
 #If cue or command contains "QUIT", sets recvr's quitFlag to False
 #Ex. sendCommand("1:F 1000;LED 3")
 def sendCommand(cmd):
-	recvr = int(cmd.split(':')[0])
-	command = cmd.split(':')[1]
-	sendDATA(recvr , command)
-	#If command contains "QUIT", set recvr's quitFlag to False
-	if command.find('QUIT') != -1: quitFlag[recvr] = False
+	cmd = cmd.strip().split('|')
+	for i in range(len(cmd)):
+		recvr = int(cmd[i].split(':')[0].strip())
+		command = cmd[i].split(':')[1].strip()
+		sendDATA(recvr , command)
+		#If command contains "QUIT", set recvr's quitFlag to False
+		if command.find('QUIT') != -1: quitFlag[recvr] = False
 
 
 def main():
 	global cueNum , lastCue
 	#Init terminal
 	os.system('clear')
-	print "Accepts blank (ENTER), cue number, or stand-alone command.\nExample command:  0:F 500;LED 3"
+	print "Accepts blank (ENTER), cue number, or stand-alone command.\nExample command:  0 : F 500 ; LED 3\nMultiple robots:  0 : LED 1 | 1 : LED 2"
 	
 	while quitFlag[0] or quitFlag[1] or quitFlag[2] or quitFlag[3]:		#Exits once all clients have QUIT
 		

@@ -1,7 +1,7 @@
 EV3-Remote
 ===
 
-2013-11-26
+2013-12-03
 
 Michael duPont - flyinactor91.com
 
@@ -14,8 +14,6 @@ The default setup is a Left (A) and Right (B) motor with a third motor or servo 
 This code does not have any sensors
 
 ---
-
-Commands separated by ';'
 
 Available Commands:
 
@@ -37,7 +35,17 @@ Available Commands:
 		Battery:	BAT ##Returns the battery level
 		Quit:		QUIT
 
-Example: F 1000 N;LED 8;S 300;P 2000;L 220;B 300;S -300;BEEP 5;QUIT
+Commands separated by ' ; '
+
+Receivers separated by ' | '
+
+Command structure:
+
+	receiver #1 <int IP index in 'host'> : command #1 ; command #2 ; (etc) | receiver #2 (etc)
+
+Example:
+
+	0 : F 1000 N ; LED 3 | 1 : WAV hello.wav
 
 Notes:
 
@@ -47,3 +55,5 @@ Notes:
 	Beep patterns:
 		1 = beep , 2 = two beeps , 3 = buzzer
 		4 = ascending beeps , 5 = descending beeps
+	WAV files:
+		Refer to Notes file for how to properly format the *.wav file
