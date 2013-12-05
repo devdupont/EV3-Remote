@@ -4,33 +4,30 @@
 ##--Control hub for multiple robots/clients
 ##--EV3-Remote - https://github.com/flyinactor91/EV3-Remote
 
-##--2013-12-03
+##--2013-12-04
 
 import socket , os
 
 host = ('192.168.42.11','192.168.42.17','192.168.42.13','localhost')
-
 #Alter the values to reflect the number of clients according to index in 'host'
 quitFlag = [True , False , False , False]
-
 port = 5678
-
 cueNum = 0
 lastCue = -1
 
-##--Ex Cue: [ (0 , 'F 500;LED 4') , (2 , 'L 400;BEEP 4') ]
-cueList = [ [ (0 , 'F 100 N;S 100') ] ,								#Init Robot
-			[ (0 , 'F 500;LED 1') ],								#First Cue
-			[ (0 , 'R 220 N;LED 2') ],
-			[ (0 , 'BEEP 4;S 500;P 2000;S -500;BEEP 5') ],
-			[ (0 , 'L 220;LED 3') ],
-			[ (0 , 'B 500;LED 0') ],								#Final Que
-			[ (0 , 'QUIT') ]										#End Program
+##--Ex Cue: '0 : F 500;LED 4 | 2 : L 400;BEEP 4'
+cueList = [ '0 : F 100 N ; S 100' ,							#Init Robot
+			'0 : F 500 ; LED 1' ,							#First Cue
+			'0 : R 220 N ; LED 2',
+			'0 : BEEP 4 ; S 500 ; P 2000 ; S -500 ; BEEP 5' ,
+			'0 : L 220 ; LED 3' ,
+			'0 : B 500 ; LED 0' ,							#Final Que
+			'0 : QUIT'										#End Program
 		  ]
 
-showCues = [[ (0 , 'F 100 N;S 100') ],
-			[ (0 , 'LED 8;MS M 100;F 1000;P 1000; BEEP 5;P 1000;LED 0') ],
-			[ (0 , 'QUIT') ]
+showCues = [ '0 : F 100 N ; S 100' ,
+			 '0 : LED 8 ; MS M 100 ; F 1000 ; P 1000 ; BEEP 5 ; P 1000 ; LED 0',
+			 '0 : QUIT'
 		   ]
 
 
@@ -53,21 +50,10 @@ def sendDATA(recvr , command):
 	except Exception , e:
 		print 'Error: ' + str(e)[str(e).find(']')+1:]
 
-#Send cue from cueList to selected recvr. Returns None.
-#If cue contains "QUIT", sets recvr's quitFlag to False
-#Ex. sendCue(5)
-def sendCue(cueNum):
-	for tup in cueList[cueNum]:
-		recvr = int(tup[0])
-		command = tup[1]
-		sendDATA(recvr , command)
-		#If command contains "QUIT", set recvr's quitFlag to False
-		if command.find('QUIT') != -1: quitFlag[recvr] = False
-
 
 #Send stand-alone command to selected recvr. Returns None
 #If cue or command contains "QUIT", sets recvr's quitFlag to False
-#Ex. sendCommand("1:F 1000;LED 3")
+#Ex. sendCommand('1 : F 1000 ; LED 3')
 def sendCommand(cmd):
 	cmd = cmd.strip().split('|')
 	for i in range(len(cmd)):
@@ -97,7 +83,7 @@ def main():
 				print 'Cue is out of bounds. Reverting to last cue'
 				cueNum = lastCue+1
 			else:
-				sendCue(cueNum)
+				sendCommand(cueList[cueNum])
 				#Update queNums
 				lastCue = cueNum
 				cueNum += 1
