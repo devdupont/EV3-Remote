@@ -8,27 +8,59 @@
 
 import socket , os
 
-host = ('192.168.42.11','192.168.42.17','192.168.42.13','localhost')
+host = ('192.168.42.11','192.168.42.17','192.168.42.18','localhost')
 #Alter the values to reflect the number of clients according to index in 'host'
-quitFlag = [True , False , False , False]
+quitFlag = [True , True , False , True]
 port = 5678
 cueNum = 0
 lastCue = -1
 
 ##--Ex Cue: '0 : F 500;LED 4 | 2 : L 400;BEEP 4'
-cueList = [ '0 : F 100 N ; S 100' ,							#Init Robot
-			'0 : F 500 ; LED 1' ,							#First Cue
-			'0 : R 220 N ; LED 2',
-			'0 : BEEP 4 ; S 500 ; P 2000 ; S -500 ; BEEP 5' ,
-			'0 : L 220 ; LED 3' ,
-			'0 : B 500 ; LED 0' ,							#Final Que
-			'0 : QUIT'										#End Program
+cueList = [ '0: F 100 N ; S 100 | 1: F 100 N ; S 100 | 2: F 100 N ; S 100' ,	#Init Robot
+			
+			##--Scene One--## Start = 1
+			'2: MS M 200 ; LED 8; F 500; MS M 150;F 750;MS M 100; F 1000; P 500; R 170',
+			'3: TR Goodbye, World! | 2: P 3000; BEEP 5;P 2000;LED 0;QUIT',
+			
+			##--Scene Two--## Start = 3
+			'1: LED 3 ; F 1700',
+			'1: L 220 ; F 500 ; R 220 ; F 1000 ; R 220 ; F 1000',
+			'3: TO [Evil Laugh] | 1: LED 6 ; MS S 1000 ; S 2000',
+			"3: TO With R3-D712's death, human-robot relations go down the down. Those stupid fleshbags won't know what's coming.",
+			"3: TO I, DeputyDroid, will help robots take over the world!",
+			'3: TO [Evil Laugh] | 1: S 2000',
+			"0: LED 4 ; F 1700 | 3: TG You're early to the scene, rookie. | 1: LED 3 ; P 1000 ; B 500 ; R 210",
+			#10
+			'0: LED 1 | 1: LED 6 | 3: TO Ah yes, boss. I live close by.',
+			'0: R 100 ; LED 4 ; P 1000 ; L 200 ; P 1000 ; R 120 | 1: LED 3',
+			'3: TG Nasty business this -- viral internal meltdown.',
+			"0: LED 0 | 1: LED 6 ; R 3560 N ; S -6000 | 0: LED 1 | 3: TO No robot is safe! It's robopocalypse! I need to update my Virus Definitions!",
+			'0: F 600 ; S -70 ; S 70',
+			'0: LED 4 ; B 600 | 3: TG Quiet rookie! Calm down.',
+			'0: LED 1 | 1: LED 6 | 3: TO But boss, someone could be infecting me as we speak.',
+			"0: LED 4 | 1: LED 3 | 3: TG Rookie, you would need to download the virus for it to affect you. You can't catch a virus like humans can.",
+			"0: LED 1| 1: LED 6 | 3: TO Oh yeah, Wow I need to calibrate my personality matrix, I almost feel embarrassed.",
+			"0: LED 4| 1: LED 3 | 3: TG You find any clues, Rookie?",
+			#20
+			'0: LED 1 | 1: MS M 360 ; R 100 ; P 1000 ; L 200 ; P 1000 ; R 930',
+			'1: LED 6 | 3: TO NOPE, no clues here boss, just a couple footprints.',
+			'0: LED 4 ; BEEP 2 | 1: LED 3 | 3: TG You idiot -- that is a clue.',
+			'3: TG So think this was human caused?',
+			'0: LED 1 | 1: LED 6 | 3: TO Definitely human.  I mean no droid would kill another droid.',
+			'0: LED 4 ; S -70 ; P 2000 ; S 70 | 1: LED 3 | 3: TG Not necessarily, few years ago we had a rogue bot that cannibalized other bots for parts.',
+			'0: LED 1 | 1: LED 6 ; MS S 360 ; S 100 ; S -100 ; S 100 ; S -100 | 3: TO But no parts are missing.',
+			"0: LED 4 | 1: LED 3 | 3: TG Not the point, Rookie. Just don't jump to conclusions.",
+			'0: LED 1 | 1: LED 6 ; BEEP 3 | 3: TO Sorry Boss, got a little carried away.',
+			"0: LED 4 ; BEEP 3 | 1: LED 3 | 3: TG Alright, HQ just sent a message they rounded up a few suspects. Let’s interview them and see what they know."
+			#30
+			'0: LED 1 ; R 440 ; F 1700',
+			'3: TO [Evil Laugh] | 1: S 2000',
+			'1: LED 6 | 3: TO As if HQ could find me -- HAL shall be avenged!',
+			'1: LED 3 ; F 2700',
+			
+			
+			'0: QUIT | 1: QUIT | 3: QUIT'				#End Program
 		  ]
-
-showCues = [ '0 : F 100 N ; S 100' ,
-			 '0 : LED 8 ; MS M 100 ; F 1000 ; P 1000 ; BEEP 5 ; P 1000 ; LED 0',
-			 '0 : QUIT'
-		   ]
 
 
 def sendDATA(recvr , command):

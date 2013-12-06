@@ -13,10 +13,7 @@ from pygame.locals import *
 port = 5678
 defaultTimeout = 5
 
-B = (0,0,0)
-R = (255,0,0)
-G = (0,255,0)
-O = (255,165,0)
+colorLib = { 'B' : (0,0,0) , 'R' : (255,0,0) , 'G' : (0,255,0) , 'O' : (255,115,0) }
 
 class screen:
         #Init window
@@ -27,12 +24,12 @@ class screen:
         
         #Display text in window
         def showText(self , txt,c):
-                self.win.fill(b)
+                self.win.fill(colorLib['B'])
                 basicfont = pygame.font.SysFont(None, 48)
                 w, h = basicfont.size(txt) #gets size of font
                 lines = self.wrapline(txt,basicfont,640) #gets lines of text that will be put up with text wraping engaged
                 for x in range(0,len(lines)): #places all lines on screen with text wrapping
-                        text = basicfont.render(lines[x] , True , c, (0,0,0))
+                        text = basicfont.render(lines[x] , True , colorLib[c], (0,0,0))
                         textRect = text.get_rect()
                         textRect.centerx = self.win.get_rect().centerx
                         textRect.centery = h + h * x # used to determine where to place the letters so that they aren't on top of each other
@@ -45,18 +42,19 @@ class screen:
                 if os.path.isfile(fName):
                         img = pygame.image.load(fName)
                         w , h = self.size
-                        self.win.blit(pygame.transform.scale(img, (w *3/4,h)) , (0,0))
+                        imgW = h*3/4
+                        self.win.blit(pygame.transform.scale(img, (imgW,h)) , (w/2-imgW/2,0))
                         pygame.display.flip()
                 else: print 'File not found: ' + fName
         
         #Clear text or image from screen
         def clearWin(self):
                 basicfont = pygame.font.SysFont(None , 48)
-                text = basicfont.render("" , True , b , (0,0,0))
+                text = basicfont.render("" , True , colorLib['B'] , (0,0,0))
                 textrect = text.get_rect()
                 textrect.centerx = self.win.get_rect().centerx
                 textrect.centery = self.win.get_rect().centery
-                self.win.fill(b)
+                self.win.fill(colorLib['B'])
                 self.win.blit(text , textrect)
                 pygame.display.flip()
  
@@ -103,8 +101,7 @@ def main():
         
         #Create screen
         disp = screen(640 , 480)
-        quitFlag = True
-        disp.showText("Hello World haoewjangaeinarebha;eh   parwoghaoeihgair; a;oihjaorighaphrvaoihrgij iha rrighaerihgoaghj 0gaegh;aerh")
+        quitFlag = False
         while not quitFlag:
                 
                 #Recieve connection / command
