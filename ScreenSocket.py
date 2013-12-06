@@ -44,7 +44,8 @@ class screen:
         def showImg(self , fName):
                 if os.path.isfile(fName):
                         img = pygame.image.load(fName)
-                        self.win.blit(pygame.transform.scale(img , self.size) , (0,0))
+                        w , h = self.size
+                        self.win.blit(pygame.transform.scale(img, (w *3/4,h)) , (0,0))
                         pygame.display.flip()
                 else: print 'File not found: ' + fName
         
