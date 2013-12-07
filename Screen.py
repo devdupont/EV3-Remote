@@ -22,12 +22,24 @@ class screen:
                 self.size = (ht , wt)
                 self.win = screen = pygame.display.set_mode(self.size,HWSURFACE|DOUBLEBUF|RESIZABLE)
         
+        #Clear text or image from screen
+        def clearWin(self):
+                basicfont = pygame.font.SysFont(None , 48)
+                text = basicfont.render("" , True , colorLib['B'] , (0,0,0))
+                textrect = text.get_rect()
+                textrect.centerx = self.win.get_rect().centerx
+                textrect.centery = self.win.get_rect().centery
+                self.win.fill(colorLib['B'])
+                self.win.blit(text , textrect)
+                pygame.display.flip()
+        
         #Display text in window
         def showText(self , txt,c):
+                self.clearWin()
                 self.win.fill(colorLib['B'])
-                basicfont = pygame.font.SysFont(None, 48)
+                basicfont = pygame.font.SysFont(None, 128)
                 w, h = basicfont.size(txt) #gets size of font
-                lines = self.wrapline(txt,basicfont,640) #gets lines of text that will be put up with text wraping engaged
+                lines = self.wrapline(txt,basicfont,self.size[1]*1.4) #gets lines of text that will be put up with text wraping engaged
                 for x in range(0,len(lines)): #places all lines on screen with text wrapping
                         text = basicfont.render(lines[x] , True , colorLib[c], (0,0,0))
                         textRect = text.get_rect()
@@ -39,6 +51,7 @@ class screen:
         
         #Display image in window
         def showImg(self , fName):
+                self.clearWin()
                 if os.path.isfile(fName):
                         img = pygame.image.load(fName)
                         w , h = self.size
@@ -46,17 +59,6 @@ class screen:
                         self.win.blit(pygame.transform.scale(img, (imgW,h)) , (w/2-imgW/2,0))
                         pygame.display.flip()
                 else: print 'File not found: ' + fName
-        
-        #Clear text or image from screen
-        def clearWin(self):
-                basicfont = pygame.font.SysFont(None , 48)
-                text = basicfont.render("" , True , colorLib['B'] , (0,0,0))
-                textrect = text.get_rect()
-                textrect.centerx = self.win.get_rect().centerx
-                textrect.centery = self.win.get_rect().centery
-                self.win.fill(colorLib['B'])
-                self.win.blit(text , textrect)
-                pygame.display.flip()
  
         def truncline(self,text, font, maxwidth):
                 real=len(text)       
@@ -100,7 +102,7 @@ def main():
         screenSocket.listen(1)
         
         #Create screen
-        disp = screen(640 , 480)
+        disp = screen(1920 , 1080)
         quitFlag = False
         while not quitFlag:
                 
