@@ -4,19 +4,19 @@
 ##--Control hub for multiple robots/clients
 ##--EV3-Remote - https://github.com/flyinactor91/EV3-Remote
 
-##--2013-12-04
+##--2013-12-07
 
 import socket , os
 
 host = ('192.168.42.11','192.168.42.17','192.168.42.18','localhost')
 #Alter the values to reflect the number of clients according to index in 'host'
-quitFlag = [True , True , False , True]
+quitFlag = [True , True , True , True]
 port = 5678
 cueNum = 0
 lastCue = -1
 
 ##--Ex Cue: '0 : F 500;LED 4 | 2 : L 400;BEEP 4'
-cueList = [ '0: F 100 N ; S 100 | 1: F 100 N ; S 100 | 2: F 100 N ; S 100' ,	#Init Robot
+cueList = [ '0: F 100 N ; S 100 | 1: F 100 N ; S 100 | 2: F 100' ,	#Init Robot
 			
 			##--Scene One--## Start = 1
 			'2: MS M 200 ; LED 8; F 500; MS M 150;F 750;MS M 100; F 1000; P 500; R 170',
@@ -80,7 +80,7 @@ cueList = [ '0: F 100 N ; S 100 | 1: F 100 N ; S 100 | 2: F 100 N ; S 100' ,	#In
 			'0: BEEP 2 | 3: TG HQ will check your phone GPS records, and we will find the truth.',
 			'3: TG Will suspect #1 please sit down now.',
 			'0: LED 1 | 3: I suspect2.jpg | 1: L 300',
-			'1: S 2000', #Get whistle
+			'1: S 2000 N ; TONE 587 500 ; P 500 ; TONE 392 750', #Get whistle
 			'1: LED 6 ; R 260 | 3: TO I need to hop over to Facebook for a second, to change my status to SMITTEN.',
 			'0: R 270 ; F 630 ; LED 4 ; S -70 ; S 70 ; B 630 ; LED 1 ; L 280 | 1: LED 3',
 			'3: TG No flirting on the job, Rookie!',
@@ -115,9 +115,24 @@ cueList = [ '0: F 100 N ; S 100 | 1: F 100 N ; S 100 | 2: F 100 N ; S 100' ,	#In
 			'0: BEEP 2 | 3: TG Hmm...are you hiding a conspirator? No nevermind; no more questions.',
 			'3: TG You may sit down while we deliberate.',
 			
-			
-			'',
-			'0: QUIT | 1: QUIT | 3: QUIT'				#End Program
+			##--Scene Four--## Start 84
+			'0: LED 1 | 1: LED 6 ; L 180 | 3: TO Which one is the culprit?',
+			"0: LED 4 ; R 180 ; P 1500 ; L 170 | 1: LED 3 | 3: TG Let's review and see what the bystanders think.",
+			'0: LED 1 | 1: L 230 ; F 700 | 3: TR [Make some noise when you see the most suspicious suspect!]',
+			'3: I suspect1.jpg',
+			'1: S 2000 | 3: I suspect2.jpg',
+			'3: I suspect3.jpg',
+			#90
+			'1: R 420 | 3: TR Well...',
+			'0: LED 4 ; P 4000 ; R 300 ; S -90 ; P 1500 ; S 90 ; L 70 ; F 2400 ; QUIT | 1: L 80 | 3: TG Well, HQ does not have enough data yet. I will go back to report now. You take ALL of the suspects into custody.',
+			'1: R 200 ; P 5000 ; L 140 ; S 2000 N ; BEEP 2; P 750 ; BEEP 2 | 3: TO [Evil Laugh]',
+			'1: LED 6 | 3: TO Ha ha, fleshbags! They never would suspect a robot. I shall bring the Vision that HAL wanted, and you will rot in jail.',
+			'1: LED 3 ; F 600 N ; S 2000 N ; BEEP 2; P 750 ; BEEP 2 | 3: TO [Evil Laugh]',
+			'1: LED 2 ; P 600 ; LED 3 ; P 600 ; LED 2 ; P 600 ; LED 3 ; P 600 ; LED 2 ; P 600 ; LED 3 ; P 600 ; LED 2 ; P 600 ; LED 3 ; P 600 ; 3: TO Wait, why is my motherboard sensor reading 451 degrees?',
+			'1: LED 5 ; MS S 360 ; L 50 N ; S 1500 ; R 75 ; L 100 ; R 75 | 3: TR Oh no, when I uploaded the virus to R3-D712 it must have got loose in browser cache.',
+			'1: LED 8 ; MS M 150 ; B 20 ; L 20 ; P 200 ; B 20 ; P 400 ; F 30 ; R 10 ; P 200 ; F 20 ; R 30 ; P 200 ; R 30 ; F 50 ; P 100 ; B 10 ; L 40 ; P 500 ; MS M 500 ; F 50 | 3: TR As my electric brain melts, why must my irony sensors be the last to go...',
+			'1: P 2000 ; BEEP 5 ; P 2000 ; LED 0 ; QUIT | 3: TR Goodbye, World!',
+			'3: QUIT'				#End Program
 		  ]
 
 
