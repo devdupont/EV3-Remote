@@ -1,3 +1,6 @@
+Death of a Robot
+by Zachary Trette
+
 Stage Directions:
  - Before show starts as soon as possible, Michael will ask 3 audience members (1st Male, 2nd Female, 3rd Male)  if he can take their photo for use in the robo-skit.  His phone automatically uploads photos to Dropbox.  Laptop should be on Centre’s network so that it updates the photos there.
 - After photos taken, confirm they are available on the laptop.  Rename the photos and put them wherever they are needed so the pygame window will display them.  Then switch to RasbPi wifi so it can talk to robots.
@@ -136,9 +139,4 @@ DeputyDroid: “Wait, why is my motherboard sensor reading 451 degrees?”
 DeputyDroid: “Oh no, when I uploaded the virus to R3-D712 it must have got loose in browser cache.”
 DeputyDroid: “As my electric brain melts, why must my irony sensors be the last to go…”
 DeputyDroid: “Goodbye World!”
-DeputyDroid dies dramatically. 
-
-
-
-
-
+DeputyDroid dies dramatically.

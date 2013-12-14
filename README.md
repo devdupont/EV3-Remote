@@ -1,7 +1,7 @@
 EV3-Remote
 ===
 
-2013-12-04
+2013-12-13
 
 Michael duPont - flyinactor91.com
 
@@ -57,3 +57,19 @@ Notes:
 		4 = ascending beeps , 5 = descending beeps
 	WAV files:
 		Refer to Notes file for how to properly format the *.wav file
+
+Controller File:
+
+	Usage:
+	./Controller.py (file.txt)		- loading show from a file
+	./Controller.py (IP address, ...)	- loading IP(s) from terminal")
+	When importing from file, first line is list of Robot/Screen IPs separated by commas
+	Lines starting with # are treated as comments
+	Refer to the included cues.txt file
+
+Screen:
+
+	Screen is used to display text and images
+	Three included colors match that of the EV3 LED colors
+	Screen includes text-to-speech which uses espeak
+	To install espeak: sudo apt-get install espeak

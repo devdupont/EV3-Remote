@@ -4,7 +4,7 @@
 ##-- Accepts commands for screen responses
 ##-- EV3- Remote - https://github.com/flyinactor91/EV3-Remote
 
-## 2013-12-05
+## 2013-12-13
 
 import os , pygame
 from socket import *
@@ -49,6 +49,11 @@ class screen:
                         self.win.blit(text , textRect)
                         
                 pygame.display.update() #updates window all at once
+                ##--Comment out the next three lines to prevent text-to-speach--##
+                if c == 'R': os.system('espeak -ven-us+m1 """'+txt+'"""')
+                elif c == 'G': os.system('espeak -ven-us+f3 """'+txt+'"""')
+                elif c == 'O': os.system('espeak -ven-sc+m7 """'+txt+'"""')
+                ##--------------------------------------------------------------##
         
         #Display image in window
         def showImg(self , fName):
