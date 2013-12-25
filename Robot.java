@@ -1,5 +1,7 @@
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
+import java.net.ServerSocket;
+import java.util.Scanner;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
@@ -14,9 +16,13 @@ import lejos.util.Delay;
  * Generic robot client
  * Lejos 0.4.0-alpha running on EV3
  * 
- * 2013-12-01
+ * 2013-12-25
  * 
- * Connects to controller via socket
+ * Commands recieved from Controller
+ *     jrun Robot (-c)
+ * Commands recieved from terminal
+ *     jrun Robot -t
+ * 
  * Commands separated by ';'
  * Available Commands:
  * 		Motors
@@ -104,8 +110,21 @@ class Robot {
     public static void main(String args[]) throws IOException {
         String stringIn;
         String[] commands , subCommand;
-        int APos , BPos;
+        //int APos , BPos;
         int port = 5678;
+        boolean fromClient = true;
+        //If recieving commands from Controller
+        if ((args.length == 0) || ((args.length == 1) && (args[0].equals("-c")))) {
+			fromClient = true;
+		}
+        //If recieving commands from terminal
+        else if ((args.length == 1) && (args[0].equals("-t"))) {
+			fromClient = false;
+		}
+        else {
+			System.out.println("Usage: java Robot (-c/-t)");
+			System.exit(0);
+		}
         
         //Init Robot
         System.out.println("Running...");
@@ -113,22 +132,31 @@ class Robot {
 		Motor.A.setSpeed(360);
 		Motor.B.setSpeed(360);
 		Motor.C.setSpeed(360);
-        ServerSocket server = new ServerSocket(port);
-        System.out.println("Wait for connection on port " + Integer.toString(port));
+		
+		ServerSocket server = new ServerSocket(port); //Server is always init'd because compile will throw errors if only declared
+		if (fromClient) {
+			System.out.println("Wait for connection on port " + Integer.toString(port));
+        }
+        
         
         boolean run = true;
-        while(run) {
-			//Accept and init new connection
-            Socket client = server.accept();
-            System.out.println("Got connection on port " + Integer.toString(port));
-            BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            PrintWriter out = new PrintWriter(client.getOutputStream(),true);
-            
-            //Read in and split command line
-            stringIn = in.readLine();
+        while (run) {
+			if (fromClient) {
+				//Accept and init new connection
+				Socket client = server.accept();
+				System.out.println("Got connection on port " + Integer.toString(port));
+				BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+				PrintWriter out = new PrintWriter(client.getOutputStream(),true);
+				stringIn = in.readLine();
+				System.out.println("\nreceived: " + stringIn);
+				out.println("Executing: " + stringIn + "\n");
+			}
+			else {
+				System.out.print("\nCommand: ");
+				stringIn = new Scanner (System.in).nextLine();
+			}
+			//Trim and get commands
             stringIn = stringIn.trim();
-            System.out.println("\nreceived: " + stringIn);
-            out.println("Executing: " + stringIn + "\n");
             commands = stringIn.split(";");
             
             //Run swith for each command
@@ -227,12 +255,12 @@ class Robot {
 						else System.out.println("File not found " + subCommand[1]);
 						break;
 					
-					//Ger battery voltage
+					//Get battery voltage
 					case "BAT":
 						LocalBattery battery = new LocalBattery();
-						String volt = Float.toString(battery.getVoltage());
-						System.out.println("Voltage: " + volt + " / 9.0");
-						if (toLCD) printToLCD("Volt " + volt);
+						String percent = Integer.toString((int)Math.round(battery.getVoltage() / 8.4 * 100)); //8.4 is the highest I could charge my battery. YMMV
+						System.out.println("Battery: " + percent + "%");
+						if (toLCD) printToLCD("Battery " + percent + "%");
 						break;
 					
 					//Quit program

@@ -1,7 +1,7 @@
 EV3-Remote
 ===
 
-2013-12-13
+2013-12-25
 
 Michael duPont - flyinactor91.com
 
@@ -35,18 +35,6 @@ Available Commands:
 		Battery:	BAT ##Returns the battery level
 		Quit:		QUIT
 
-Commands separated by ' ; '
-
-Receivers separated by ' | '
-
-Command structure:
-
-	receiver #1 <int IP index in 'host'> : command #1 ; command #2 ; (etc) | receiver #2 (etc)
-
-Example:
-
-	0 : F 1000 N ; LED 3 | 1 : WAV hello.wav
-
 Notes:
 
 	LED patterns:
@@ -58,14 +46,31 @@ Notes:
 	WAV files:
 		Refer to Notes file for how to properly format the *.wav file
 
-Controller File:
+Controller:
 
-	Usage:
-	./Controller.py (file.txt)		- loading show from a file
-	./Controller.py (IP address, ...)	- loading IP(s) from terminal")
+	Usage
+		./Controller.py (file.txt)		- loading show from a file
+		./Controller.py (IP address, ...)	- loading IP(s) from terminal"
+	Receivers separated by ' | '
+	Commands separated by ' ; '
+	Command structure
+		receiver #1 <int IP index in 'host'> : command #1 ; command #2 ; (etc) | receiver #2 (etc)
+	Example
+		0 : F 1000 N ; LED 3 | 1 : WAV hello.wav
 	When importing from file, first line is list of Robot/Screen IPs separated by commas
 	Lines starting with # are treated as comments
 	Refer to the included cues.txt file
+
+Robot:
+
+	Usage
+		jrun Robot (-c)	- Commands recieved from Controller
+		jrun Robot -t	- Commands recieved from terminal
+	Commands separated by ' ; '
+	Command structure
+		command #1 ; command #2 ; (etc)
+	Example
+		F 1000 N ; LED 3 ; WAV hello.wav
 
 Screen:
 

@@ -4,7 +4,7 @@
 ##-- Accepts commands for screen responses
 ##-- EV3- Remote - https://github.com/flyinactor91/EV3-Remote
 
-## 2013-12-13
+## 2013-12-25
 
 import os , pygame
 from socket import *
@@ -35,19 +35,19 @@ class screen:
         
         #Display text in window
         def showText(self , txt,c):
+                resize = 1 #Alter this value to adjust text width relative to window width
                 self.clearWin()
                 self.win.fill(colorLib['B'])
                 basicfont = pygame.font.SysFont(None, 128)
                 sw, sh = self.size
                 w, h = basicfont.size(txt) #gets size of font
-                lines = self.wrapline(txt,basicfont,self.size[1]*1.4) #gets lines of text that will be put up with text wraping engaged
+                lines = self.wrapline(txt,basicfont,self.size[1]*resize) #gets lines of text that will be put up with text wraping engaged
                 for x in range(0,len(lines)): #places all lines on screen with text wrapping
                         text = basicfont.render(lines[x] , True , colorLib[c], (0,0,0))
                         textRect = text.get_rect()
                         textRect.centerx = self.win.get_rect().centerx
                         textRect.centery = sh/3 + h * x # used to determine where to place the letters so that they aren't on top of each other, also starts text 1/3 down screen.
                         self.win.blit(text , textRect)
-                        
                 pygame.display.update() #updates window all at once
                 ##--Comment out the next three lines to prevent text-to-speach--##
                 if c == 'R': os.system('espeak -ven-us+m1 """'+txt+'"""')

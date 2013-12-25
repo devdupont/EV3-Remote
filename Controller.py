@@ -4,7 +4,7 @@
 ##--Control hub for multiple robots/clients
 ##--EV3-Remote - https://github.com/flyinactor91/EV3-Remote
 
-##--2013-12-13
+##--2013-12-25
 ##--Ex Cue: '0 : F 500;LED 4 | 2 : L 400;BEEP 4'
 
 import socket , os , sys
@@ -126,6 +126,7 @@ def main():
 		#Else stand-alone command is entered
 		else:
 			sendCommand(cue)
+	print 'End Program'
 
 
 if __name__ == '__main__':
