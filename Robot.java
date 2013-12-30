@@ -16,7 +16,7 @@ import lejos.util.Delay;
  * Generic robot client
  * Lejos 0.4.0-alpha running on EV3
  * 
- * 2013-12-25
+ * 2013-12-28
  * 
  * Commands recieved from Controller
  *     jrun Robot (-c)
@@ -64,42 +64,23 @@ class Robot {
 		LCD.drawString(txt , 0 , 0);
 	}
 	
-	public static void Forward(int unit , boolean serial) {
-		System.out.println("Forward " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
-		if (toLCD) printToLCD("Forward");
+	//Controls main/movement motors. Direction = "Forward" || "Backward" || "Left" || "Right"
+	//New positions are both calculated early to minimize lag time between motor A init and motor B init
+	public static void Move(String direction , int unit , boolean serial) {
+		System.out.println(direction + " " + Integer.toString(unit) + " units. !Serial: " + Boolean.toString(serial));
+		if (toLCD) printToLCD(direction);
 		int APos = Motor.A.getTachoCount();
 		int BPos = Motor.B.getTachoCount();
-		Motor.A.rotateTo(APos + unit , true);
-		Motor.B.rotateTo(BPos + unit , serial);
+		int newAPos , newBPos;
+		if ((direction.equals("Forward")) || (direction.equals("Right"))) newAPos = APos + unit;
+		else newAPos = APos - unit;
+		if ((direction.equals("Forward")) || (direction.equals("Left"))) newBPos = BPos + unit;
+		else newBPos = BPos - unit;
+		Motor.A.rotateTo(newAPos , true);
+		Motor.B.rotateTo(newBPos , serial);
 	}
 	
-	public static void Backward(int unit , boolean serial) {
-		System.out.println("Backward " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
-		if (toLCD) printToLCD("Backward");
-		int APos = Motor.A.getTachoCount();
-		int BPos = Motor.B.getTachoCount();
-		Motor.A.rotateTo(APos - unit , true);
-		Motor.B.rotateTo(BPos - unit , serial);
-	}
-	
-	public static void Left(int unit , boolean serial) {
-		System.out.println("Left " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
-		if (toLCD) printToLCD("Left");
-		int APos = Motor.A.getTachoCount();
-		int BPos = Motor.B.getTachoCount();
-		Motor.A.rotateTo(APos - unit , true);
-		Motor.B.rotateTo(BPos + unit , serial);
-	}
-	
-	public static void Right(int unit , boolean serial) {
-		System.out.println("Right " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
-		if (toLCD) printToLCD("Right");
-		int APos = Motor.A.getTachoCount();
-		int BPos = Motor.B.getTachoCount();
-		Motor.A.rotateTo(APos + unit , true);
-		Motor.B.rotateTo(BPos - unit , serial);
-	}
-	
+	//Controls non-movement motor. Unit can be + or -
 	public static void Servo(int unit , boolean serial) {
 		System.out.println("Servo " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
 		if (toLCD) printToLCD("Servo");
@@ -110,7 +91,6 @@ class Robot {
     public static void main(String args[]) throws IOException {
         String stringIn;
         String[] commands , subCommand;
-        //int APos , BPos;
         int port = 5678;
         boolean fromClient = true;
         //If recieving commands from Controller
@@ -166,26 +146,34 @@ class Robot {
 					
 					//Forward
 					case "F":
-						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Forward(Integer.parseInt(subCommand[1]) , true);
-						else Forward(Integer.parseInt(subCommand[1]) , false);
+						//if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Forward(Integer.parseInt(subCommand[1]) , true);
+						//else Forward(Integer.parseInt(subCommand[1]) , false);
+						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Move("Forward" , Integer.parseInt(subCommand[1]) , true);
+						else Move("Forward" , Integer.parseInt(subCommand[1]) , false);
 						break;
 					
 					//Backwards
 					case "B":
-						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Backward(Integer.parseInt(subCommand[1]) , true);
-						else Backward(Integer.parseInt(subCommand[1]) , false);
+						//if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Backward(Integer.parseInt(subCommand[1]) , true);
+						//else Backward(Integer.parseInt(subCommand[1]) , false);
+						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Move("Backward" , Integer.parseInt(subCommand[1]) , true);
+						else Move("Backward" , Integer.parseInt(subCommand[1]) , false);
 						break;
 					
 					//Left
 					case "L":
-						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Left(Integer.parseInt(subCommand[1]) , true);
-						else Left(Integer.parseInt(subCommand[1]) , false);
+						//if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Left(Integer.parseInt(subCommand[1]) , true);
+						//else Left(Integer.parseInt(subCommand[1]) , false);
+						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Move("Left" , Integer.parseInt(subCommand[1]) , true);
+						else Move("Left" , Integer.parseInt(subCommand[1]) , false);
 						break;
 					
 					//Right
 					case "R":
-						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Right(Integer.parseInt(subCommand[1]) , true);
-						else Right(Integer.parseInt(subCommand[1]) , false);
+						//if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Right(Integer.parseInt(subCommand[1]) , true);
+						//else Right(Integer.parseInt(subCommand[1]) , false);
+						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Move("Right" , Integer.parseInt(subCommand[1]) , true);
+						else Move("Right" , Integer.parseInt(subCommand[1]) , false);
 						break;
 					
 					//Servo
