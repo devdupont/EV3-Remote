@@ -146,32 +146,24 @@ class Robot {
 					
 					//Forward
 					case "F":
-						//if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Forward(Integer.parseInt(subCommand[1]) , true);
-						//else Forward(Integer.parseInt(subCommand[1]) , false);
 						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Move("Forward" , Integer.parseInt(subCommand[1]) , true);
 						else Move("Forward" , Integer.parseInt(subCommand[1]) , false);
 						break;
 					
 					//Backwards
 					case "B":
-						//if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Backward(Integer.parseInt(subCommand[1]) , true);
-						//else Backward(Integer.parseInt(subCommand[1]) , false);
 						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Move("Backward" , Integer.parseInt(subCommand[1]) , true);
 						else Move("Backward" , Integer.parseInt(subCommand[1]) , false);
 						break;
 					
 					//Left
 					case "L":
-						//if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Left(Integer.parseInt(subCommand[1]) , true);
-						//else Left(Integer.parseInt(subCommand[1]) , false);
 						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Move("Left" , Integer.parseInt(subCommand[1]) , true);
 						else Move("Left" , Integer.parseInt(subCommand[1]) , false);
 						break;
 					
 					//Right
 					case "R":
-						//if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Right(Integer.parseInt(subCommand[1]) , true);
-						//else Right(Integer.parseInt(subCommand[1]) , false);
 						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Move("Right" , Integer.parseInt(subCommand[1]) , true);
 						else Move("Right" , Integer.parseInt(subCommand[1]) , false);
 						break;
