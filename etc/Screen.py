@@ -4,15 +4,26 @@
 ##-- Accepts commands for screen responses
 ##-- EV3- Remote - https://github.com/flyinactor91/EV3-Remote
 
-## 2013-12-31
+## 2014-01-01
 
-import os , pygame
+# Available Commands:
+#     Text:    T[R/G/O] text
+#     Image:   I fileName
+#     Clear:   C
+#     Quit:    QUIT
+
+# Example Command: TG Hello World!
+# Text color determined by letter following T (red, green, orange)
+
+import os , pygame , sys
 from socket import *
 from pygame.locals import *
 
 port = 5678
 defaultTimeout = 5
 
+#Default colors match those available as EV3 LED choices
+#Add custom RGB colors here
 colorLib = { 'B' : (0,0,0) , 'R' : (255,0,0) , 'G' : (0,255,0) , 'O' : (255,115,0) }
 
 class screen:
@@ -33,12 +44,13 @@ class screen:
 		self.win.blit(text , textrect)
 		pygame.display.flip()
 
-	def showText(self , txt,c):
+	def showText(self , txt , c):
 		"""Display text in window"""
+		fontSize = 128 #Set font size within the window
 		resize = 1 #Alter this value to adjust text width relative to window width
 		self.clearWin()
 		self.win.fill(colorLib['B'])
-		basicfont = pygame.font.SysFont(None, 128)
+		basicfont = pygame.font.SysFont(None, fontSize)
 		sw, sh = self.size
 		w, h = basicfont.size(txt) #gets size of font
 		lines = self.wrapline(txt,basicfont,self.size[1]*resize) #gets lines of text that will be put up with text wraping engaged
@@ -56,7 +68,9 @@ class screen:
 		##--------------------------------------------------------------##
 
 	def showImg(self , fName):
-		"""Display image in window"""
+		"""Display image in window
+		Supported formats: JPG, PNG, GIF (non animated), BMP, PCX, TGA (uncompressed),
+		TIF, LBM (and PBM), PBM (and PGM, PPM), XPM"""
 		self.clearWin()
 		if os.path.isfile(fName):
 			img = pygame.image.load(fName)
@@ -66,7 +80,7 @@ class screen:
 			pygame.display.flip()
 		else: print 'File not found: ' + fName
 
-	def truncline(self,text, font, maxwidth):
+	def truncline(self , text , font , maxwidth):
 		real=len(text)
 		stext=text
 		l=font.size(text)[0]
@@ -87,7 +101,7 @@ class screen:
 			done=0
 		return real, done, stext
 
-	def wrapline(self,text, font, maxwidth):
+	def wrapline(self , text , font , maxwidth):
 		done=0
 		wrapped=[]
 		while not done:
@@ -97,34 +111,49 @@ class screen:
 		return wrapped
 
 def main():
-	#Init socket
-	screenSocket = socket(AF_INET, SOCK_STREAM)
-	screenSocket.bind(('' , port))
-	screenSocket.listen(1)
+	fromClient = True
+	#If recieving commands from the terminal
+	if len(sys.argv) > 1 and sys.argv[1] == '-t':
+		fromClient = False
+	#If recieving commands from the controller
+	else:
+		#Init socket
+		screenSocket = socket(AF_INET, SOCK_STREAM)
+		screenSocket.bind(('' , port))
+		screenSocket.listen(1)
 
 	#Create screen
-	disp = screen(1920 , 1080) #Set window dimentions here
+	#disp = screen(1920 , 1080) #Set window dimentions here
+	disp = screen(400 , 300) #Set window dimentions here
 	quitFlag = False
 	while not quitFlag:
 		#Recieve connection / command
-		connectionSocket , addr = screenSocket.accept()
-		connectionSocket.settimeout(defaultTimeout)
-		msg = connectionSocket.recv(1024).strip()
+		if fromClient:
+			connectionSocket , addr = screenSocket.accept()
+			connectionSocket.settimeout(defaultTimeout)
+			msg = connectionSocket.recv(1024).strip()
+		else:
+			msg = raw_input('Command: ').strip()
 		#Command ident
-		#Text
-		if msg[0] == 'T': disp.showText(msg[2:].strip(),msg[1].upper())
-		#Image
-		elif msg[0] == 'I': disp.showImg(msg[1:].strip())
-		#Clear
-		elif msg[0] == 'C': disp.clearWin()
-		#Quit
-		elif msg == 'QUIT': quitFlag = True
-		#Catch
-		else: print 'Not a valid command'
-		#Close connection
-		connectionSocket.close()
-	#Close socket
-	screenSocket.close()
+		try:
+			#Text
+			if msg[0] == 'T': disp.showText(msg[2:].strip(),msg[1].upper())
+			#Image
+			elif msg[0] == 'I': disp.showImg(msg[1:].strip())
+			#Clear
+			elif msg[0] == 'C': disp.clearWin()
+			#Quit
+			elif msg == 'QUIT': quitFlag = True
+			#Catch
+			else: print 'Not a valid command'
+		except:
+			print 'Command error'
+		if fromClient:
+			#Close connection
+			connectionSocket.close()
+	if fromClient:
+		#Close socket
+		screenSocket.close()
 
 
 if __name__ == '__main__':
