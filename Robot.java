@@ -16,7 +16,7 @@ import lejos.util.Delay;
  * Generic robot client
  * Lejos 0.4.0-alpha running on EV3
  * 
- * 2013-12-28
+ * 2014-01-02
  * 
  * Commands recieved from Controller
  *     jrun Robot (-c)
@@ -30,7 +30,7 @@ import lejos.util.Delay;
  * 			Backward: 	B distance<int> (serial<def=Y /N>)
  * 			Left:		L degree<int> (serial< def=Y /N>)
  * 			Right:		R degree<int> (serial< def=Y /N>)
- * 			Servo:		S degree<int +/->
+ * 			Servo:		S degree<int +/-> (serial< def=Y /N>)
  * 			MotorSpd:	MS motor<M/S> speed<int>				#Main (A and B) / Servo (C)
  *		Sound
  * 			Volume:		VOL percent<int 0-100>					#Buzzer/TONE doesn't work if volume less than 8%
@@ -67,7 +67,7 @@ class Robot {
 	//Controls main/movement motors. Direction = "Forward" || "Backward" || "Left" || "Right"
 	//New positions are both calculated early to minimize lag time between motor A init and motor B init
 	public static void Move(String direction , int unit , boolean serial) {
-		System.out.println(direction + " " + Integer.toString(unit) + " units. !Serial: " + Boolean.toString(serial));
+		System.out.println(direction + " " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(!serial));
 		if (toLCD) printToLCD(direction);
 		int APos = Motor.A.getTachoCount();
 		int BPos = Motor.B.getTachoCount();
@@ -82,7 +82,7 @@ class Robot {
 	
 	//Controls non-movement motor. Unit can be + or -
 	public static void Servo(int unit , boolean serial) {
-		System.out.println("Servo " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(serial));
+		System.out.println("Servo " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(!serial));
 		if (toLCD) printToLCD("Servo");
 		int CPos = Motor.C.getTachoCount();
 		Motor.C.rotateTo(CPos + unit , serial);
@@ -182,7 +182,7 @@ class Robot {
 							Motor.A.setSpeed(Integer.parseInt(subCommand[2]));
 							Motor.B.setSpeed(Integer.parseInt(subCommand[2]));
 						}
-						if (subCommand[1].equals("S")) Motor.C.setSpeed(Integer.parseInt(subCommand[2]));
+						else if (subCommand[1].equals("S")) Motor.C.setSpeed(Integer.parseInt(subCommand[2]));
 						break;
 					
 					//Pause
