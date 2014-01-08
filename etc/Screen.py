@@ -21,54 +21,49 @@ from pygame.locals import *
 
 port = 5678
 defaultTimeout = 5
-
-#Default colors match those available as EV3 LED choices
-#Add custom RGB colors here
-colorLib = { 'B' : (0,0,0) , 'R' : (255,0,0) , 'G' : (0,255,0) , 'O' : (255,115,0) }
+screenWidth = 1920
+screenHeight = 1080
 
 class screen:
-	def __init__(self , ht , wt):
-		"""Init window"""
+	
+	#Default colors match those available as EV3 LED choices
+	#Add custom RGB colors here
+	colorLib = { 'B' : (0,0,0) , 'W' : (255,255,255) , 'R' : (255,0,0) , 'G' : (0,255,0) , 'O' : (255,115,0) }
+	
+	def __init__(self , width , height , font_size = 128):
+		"""Init window: screen(width , height [, font_size])"""
 		pygame.init()
-		self.size = (ht , wt)
-		self.win = screen = pygame.display.set_mode(self.size,HWSURFACE|DOUBLEBUF|RESIZABLE)
+		self.size = (width , height)
+		self.fontSize = font_size
+		self.resize = 1 #Alter this value to adjust text width relative to window width
+		self.win = pygame.display.set_mode(self.size,HWSURFACE|DOUBLEBUF|RESIZABLE)
 
 	def clearWin(self):
 		"""Clear text or image from screen"""
-		basicfont = pygame.font.SysFont(None , 48)
-		text = basicfont.render("" , True , colorLib['B'] , (0,0,0))
-		textrect = text.get_rect()
-		textrect.centerx = self.win.get_rect().centerx
-		textrect.centery = self.win.get_rect().centery
-		self.win.fill(colorLib['B'])
-		self.win.blit(text , textrect)
+		self.win.fill(self.colorLib['B'])
 		pygame.display.flip()
 
-	def showText(self , txt , c):
+	def showText(self , txt , txtColor = 'W'):
 		"""Display text in window"""
-		fontSize = 128 #Set font size within the window
-		resize = 1 #Alter this value to adjust text width relative to window width
 		self.clearWin()
-		self.win.fill(colorLib['B'])
-		basicfont = pygame.font.SysFont(None, fontSize)
-		sw, sh = self.size
-		w, h = basicfont.size(txt) #gets size of font
-		lines = self.wrapline(txt,basicfont,self.size[1]*resize) #gets lines of text that will be put up with text wraping engaged
+		basicfont = pygame.font.SysFont(None, self.fontSize)
+		w, h = basicfont.size(txt) #get dimensions of font
+		lines = self.__wrapline(txt,basicfont,self.size[1]*self.resize) #gets lines of text that will be put up with text wraping engaged
 		for x in range(0,len(lines)): #places all lines on screen with text wrapping
-			text = basicfont.render(lines[x] , True , colorLib[c], (0,0,0))
+			text = basicfont.render(lines[x] , True , self.colorLib[txtColor], (0,0,0))
 			textRect = text.get_rect()
 			textRect.centerx = self.win.get_rect().centerx
-			textRect.centery = sh/3 + h * x # used to determine where to place the letters so that they aren't on top of each other, also starts text 1/3 down screen.
+			textRect.centery = self.size[1]/3 + h * x # used to determine where to place the letters so that they aren't on top of each other, also starts text 1/3 down screen.
 			self.win.blit(text , textRect)
 		pygame.display.update() #updates window all at once
-		##--Comment out the next three lines to prevent text-to-speach--##
-		if c == 'R': os.system('espeak -ven-us+m1 """'+txt+'"""')
-		elif c == 'G': os.system('espeak -ven-us+f3 """'+txt+'"""')
-		elif c == 'O': os.system('espeak -ven-sc+m7 """'+txt+'"""')
+		##--Un-comment the next three lines to enable text-to-speach----##
+		#if txtColor == 'R': os.system('espeak -ven-us+m1 """'+txt+'"""')
+		#elif txtColor == 'G': os.system('espeak -ven-us+f3 """'+txt+'"""')
+		#elif txtColor == 'O': os.system('espeak -ven-sc+m7 """'+txt+'"""')
 		##--------------------------------------------------------------##
 
 	def showImg(self , fName):
-		"""Display image in window
+		"""Display vertical 4x3 image in window
 		Supported formats: JPG, PNG, GIF (non animated), BMP, PCX, TGA (uncompressed),
 		TIF, LBM (and PBM), PBM (and PGM, PPM), XPM"""
 		self.clearWin()
@@ -79,33 +74,40 @@ class screen:
 			self.win.blit(pygame.transform.scale(img, (imgW,h)) , (w/2-imgW/2,0))
 			pygame.display.flip()
 		else: print 'File not found: ' + fName
+	
+	def setFontSize(self , newSize):
+		"""Change font size for next line of text written to the window"""
+		self.fontSize = newSize
+	
+	def setTextResize(size_multiplier = 1):
+		"""Change font width multiplier for text in the window
+		Should be used if window is resized after created"""
+		self.resize = size_multiplier
 
-	def truncline(self , text , font , maxwidth):
+	def __truncline(self , text , font , maxwidth):
 		real=len(text)
 		stext=text
 		l=font.size(text)[0]
 		cut=0
 		a=0
 		done=1
-		old = None
 		while l > maxwidth:
-			a=a+1
+			a += 1
 			n=text.rsplit(None, a)[0]
 			if stext == n:
-					cut += 1
-					stext= n[:-cut]
-			else:
-					stext = n
+				cut += 1
+				stext= n[:-cut]
+			else: stext = n
 			l=font.size(stext)[0]
 			real=len(stext)
 			done=0
 		return real, done, stext
 
-	def wrapline(self , text , font , maxwidth):
+	def __wrapline(self , text , font , maxwidth):
 		done=0
 		wrapped=[]
 		while not done:
-			nl, done, stext=self.truncline(text, font, maxwidth)
+			nl, done, stext=self.__truncline(text, font, maxwidth)
 			wrapped.append(stext.strip())
 			text=text[nl:]
 		return wrapped
@@ -123,8 +125,7 @@ def main():
 		screenSocket.listen(1)
 
 	#Create screen
-	#disp = screen(1920 , 1080) #Set window dimentions here
-	disp = screen(400 , 300) #Set window dimentions here
+	disp = screen(screenWidth , screenHeight) #Set window dimentions here
 	quitFlag = False
 	while not quitFlag:
 		#Recieve connection / command
