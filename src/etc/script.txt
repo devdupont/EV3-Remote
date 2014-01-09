@@ -1,0 +1,142 @@
+Death of a Robot
+by Zachary Trette
+
+Stage Directions:
+ - Before show starts as soon as possible, Michael will ask 3 audience members (1st Male, 2nd Female, 3rd Male)  if he can take their photo for use in the robo-skit.  His phone automatically uploads photos to Dropbox.  Laptop should be on Centre’s network so that it updates the photos there.
+- After photos taken, confirm they are available on the laptop.  Rename the photos and put them wherever they are needed so the pygame window will display them.  Then switch to RasbPi wifi so it can talk to robots.
+[ Have suspectX.jpg backup photos already in place, in case we have a failure to get suspect photos from audience. ]
+
+Zach will wear all black, and handle robots going on/off stage?
+
+Dr. Stonedahl will say a few words of introduction.
+
+Title: Death of a Robot
+
+Scene 1: The Murder
+
+Robot1 enters scene
+Robot1 is trailing cables/parts – beeping with successively longer pauses in between.
+Robot1 comments “Goodbye World!”
+Blackout.
+
+Scene 2: An Inspectobot Calls
+
+Lights reopen, chalk outline of robot1 on ground.
+DeputyDroid enters and moves around, pushes a cable/part off table.
+DeputyDroid moves to Centre.
+DeputyDroid '[Evil Laugh]'
+DeputyDroid shows true nature. Comment “With R3-D712’s death, human-robot relations go down the drain. Those stupid fleshbags won’t know what's coming!”
+DeputyDroid “I, DeputyDroid, will help robots take over the world”
+DeputyDroid '[Evil Laugh]'
+
+Inspectobot enters moves around, looking for clues. Comment “You’re early to the murder scene, Rookie.”
+DeputyDroid startled “Ah yes, Boss, I live close by.”
+Inspectobot comments “Nasty business this -- viral internal meltdown”
+DeputyDroid flies off handle starts moving randomly beeping erratically, comment “No robot is safe! It’s robopocalypse! I need to update my Virus Definitions!”
+Inspectobot runs into(smacks) DeputyDroid and Comments “Quiet Rookie! Calm down.”
+DeputyDroid - “But Boss it could be infecting my system as we speak.”
+Inspectobot - “Rookie, you would need to download the virus for it to affect you. You don’t catch a virus like Humans can.”
+DeputyDroid - “Oh yeah, Wow I need to calibrate my personality matrix, I almost feel embarrassed.”
+Inspectobot - “You find any clues, Rookie?”
+DeputyDroid swivels around in place comments “NOPE, no clues here boss, just a couple footprints.”
+Inspectobot beeps angrily comments “You idiot -- that is a clue.”
+Inspectobot comments “So think this was human caused?”
+DeputyDroid comments “Definitely human.  I mean no droid would kill another droid.”
+Inspectobot comments “Not necessarily, few years ago we had a rogue bot that cannibalized other bots for parts.”
+DeputyDroid comments “But no parts are missing.”
+Inspectobot comments “Not the point, Rookie. Just don't jump to conclusions.”
+Deputy Droid comments “Sorry Boss, got a little carried away.”
+Inspectobot “Alright, HQ just sent a message they rounded up a few suspects. Let’s interview them and see what they know.”
+Inspectobot exits
+DeputyDroid evil laugh
+DeputyDroid comments “As if HQ could find me -- Hal shall be avenged!”
+DeputyDroid exits
+Lights out
+
+Scene 3: My Fair Droid-killer
+
+Inspectobot and DeputyDroid enter
+Suspect 1 on screen, picture taken before hand
+DeputyDroid comments “Oh that must be the culprit, it looks just like a Dave.”
+Inspectobot comments “While the Hal3000 situation was tragic not every human is a Dave.”
+DeputyDroid comments “Poor Hal, may his RAM be forever saved in the cloud.”
+
+Inspectobot moves SR and turns toward audience.
+
+Inspectobot comments “The suspect shall now stand for questions.”
+
+(If the suspect doesn’t stand, Inspectobot comments “We are all waiting.  Please rise”)
+
+DeputyDroid comments “Do you support robots in the workplace?”
+    1.  yes: “Hmm, my polygraph sensors suggest you are lying.”
+    2.  no: “Ah hah!  See, it must be part of the anti-robot league.”
+Inspectobot comments “Quiet Rookie!”
+InspectoBot - “Now Mr. Human suspect, were you in the vicinity of 1337 Program Avenue last night?”
+    1. Yes: “That’s very suspicious.  Do not leave town during the next 48 hours.”
+    2. No: “HQ will check your phone GPS records, and we will find the truth.”
+
+InspectoBot - “Suspect #1 will please sit down now.”
+
+DeputyDroid moves SL
+Suspect 2 on screen, picture taken beforehand (preference for female)
+DeputyDroid wolf-whistles comments “I need to hop over to Facebook for a second, to change my status to SMITTEN.”
+Inspectobot smacks DeputyDroid beeps angrily “No flirting on the job, Rookie!”
+DeputyDroid comments “Okay, what’s her story?”
+Inspectobot moves SL comments “She was near scene of crime.”
+DeputyDroid - “She looks innocent to me.  She must have an alibi.”
+Inspectobot - “Well, we will find out.  Ms. Human, if you could stand up please.”
+DeputyDroid moves SR “Do you think a bot like me has a chance with a girl like her, I can download that mood music app and candlelight LEDs.”
+Inspectobot “Rookie. What did I say about flirting?”
+inspectobot “Now, miss, just a few questions, what is your shoe size?”
+((Pause for human response))
+DeputyDroid comments “Shoe size at the scene was much bigger than that.”
+Inspectobot “Not necessarily, she could have worn clown shoes.”
+DeputyDroid comments “She doesn’t look like a clown to me, Boss.”
+Inspectobot “Nevermind.  Next question, Ms. Human.”
+DeputyDroid comments “Are you a computer keyboard, ‘cause you’re definitely my type.”
+Inspectobot smacks DeputyDroid
+Inspectobot comments “Sorry about that, Miss, we won’t bother you further.  Please sit down.”
+
+Suspect 3 on screen, picture taken before hand.
+
+DeputyDroid comments “Well well well, if it isn't that virus writer, I think we have our suspect boss!”
+Inspectobot comments “Don't count your RAM before you install it, Rookie. We have had a police tail on him since being let out of jail, nowhere near the crime scene or a wireless computer.”
+DeputyDroid comments “But the virus had his style all over it, and he’s already been arrested for Assault and Battery Drain of two robots.”
+Inspectobot comments “Both counts were probably accidental, not pre-computed murder -- but you may be right.”
+Inspectobot turns toward the audience.
+Inspectobot comments “Mr. Human, if you would stand for questioning please.”
+
+Inspectobot comments “Have you ever written a virus that causes an internal meltdown of the central motherboard?”
+    1. Yes - “You have no conscience, human.  To delete a robot like that is the height of roboticide.”
+2. No - “I see, then do you know how to find the creator?”
+    1. yes - “very well then if you co-operate with the investigation we may shorten your sentence for good behavior.”
+    2. no - “Hmm are you hiding a conspirator? No nevermind, no more questions”
+
+Scene 4:
+
+DeputyDroid comments “Which one is the culprit?”
+
+Inspectobot comments “Let’s review, and see what the bystanders think.”
+Screen shows “[Make some noise when you see the most suspicious suspect!]”
+
+Cycle through each suspect.  (Maybe with music?  “Jailhouse rock?” something about jail?)
+
+Let suspect x be chosen either randomly or by audience.
+
+Inspectobot comments “Well, HQ does not have enough data yet.  I will go back to report now.  You take ALL of the suspects into custody.”
+
+Inspectobot exits stage.
+
+DeputyDroid evil laughter.
+
+DeputyDroid vocal “Ha ha. They never did expect a robot. I shall bring the Vision that Hal3000 wanted. Ha Ha.”
+
+Optional ending to consider.
+
+DeputyDroid vocal “Ha ha, fleshbags! They never would suspect a robot. I shall bring the Vision that Hal3000 wanted, and you will rot in jail. Ha Ha!”
+
+DeputyDroid: “Wait, why is my motherboard sensor reading 451 degrees?”
+DeputyDroid: “Oh no, when I uploaded the virus to R3-D712 it must have got loose in browser cache.”
+DeputyDroid: “As my electric brain melts, why must my irony sensors be the last to go…”
+DeputyDroid: “Goodbye World!”
+DeputyDroid dies dramatically.

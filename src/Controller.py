@@ -21,7 +21,8 @@ class host:
 
 def sendDATA(IP , command):
 	"""Creates socket and send/recieve a single string of data
-	Returns the recieved string or error message"""
+	Returns the recieved string or error message
+	"""
 	try:
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #Create socket
 		sock.settimeout(defaultTimeout)
@@ -37,7 +38,8 @@ def sendDATA(IP , command):
 
 def sendCommand(cmd , hosts , cueNum):
 	"""Send stand-alone command to selected recvr. If cue or command contains "QUIT", call host.turnOff(). Returns hosts
-	Ex. sendCommand('1 : F 1000 ; LED 3' , hosts , cueNum)"""
+	Ex. sendCommand('1 : F 1000 ; LED 3' , hosts , cueNum)
+	"""
 	cmd = cmd.strip().split('|')
 	for i in range(len(cmd)):
 		try:
@@ -52,14 +54,16 @@ def sendCommand(cmd , hosts , cueNum):
 	return hosts
 
 def anyOn(hosts):
-	"""Returns true if any hosts are on"""
+	"""Returns true if any hosts are on
+	"""
 	for obj in hosts:
 		if obj.isOn: return True
 	return False
 
 def setup():
 	"""Returns hosts, cueList, and cueNum vars. Value contents based on how program is called
-	Ex.  ./Controller.py cues.txt  or  ./Controller.py 192.168.42.1 192.168.42.2"""
+	Ex.  ./Controller.py cues.txt  or  ./Controller.py 192.168.42.1 192.168.42.2
+	"""
 	hosts , cueList = [] , []
 	cueNum = -1
 	#If loading show from a file--##
@@ -83,7 +87,7 @@ def setup():
 		for i in range(1 , len(sys.argv)): hosts.append(host(sys.argv[i].strip()))
 		cueList = ['']
 	#Exit if incorrectly called
-	else: sys.exit("Usage:\n./Controller.py (file.txt)\t\t- loading show from a file\n./Controller.py (IP address, ...)\t- loading IP(s) from terminal")
+	else: sys.exit('Usage:\n./Controller.py (file.txt)\t\t- loading show from a file\n./Controller.py (IP address, ...)\t- loading IP(s) from terminal')
 	return hosts , cueList , cueNum
 	
 def main():
@@ -92,7 +96,7 @@ def main():
 	
 	#Init terminal
 	os.system('clear')
-	print "Accepts blank (ENTER), cue number, or stand-alone command.\nExample command:  0 : F 500 ; LED 3\nMultiple robots:  0 : LED 1 | 1 : LED 2"
+	print 'Accepts blank (ENTER), cue number, or stand-alone command.\nExample command:  0 : F 500 ; LED 3\nMultiple robots:  0 : LED 1 | 1 : LED 2'
 	
 	while anyOn(hosts): #Exits once all clients have QUIT
 		#Get command
