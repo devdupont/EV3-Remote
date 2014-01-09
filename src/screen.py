@@ -24,7 +24,7 @@ class screen:
 	
 	#Default colors match those available as EV3 LED choices
 	#Add custom RGB colors here
-	colorLib = { 'B' : (0,0,0) , 'W' : (255,255,255) , 'R' : (255,0,0) , 'G' : (0,255,0) , 'O' : (255,115,0) }
+	colorLib = { 'N' : (0,0,0) , 'W' : (255,255,255) , 'R' : (255,0,0) , 'O' : (255,115,0) , 'Y' : (255,255,0) , 'G' : (0,255,0) , 'B' : (0,0,255) , 'P' : (139,0,204)}
 	
 	def __init__(self , width , height , font_size = 128):
 		"""Init window: screen(width , height [, font_size])
@@ -32,13 +32,13 @@ class screen:
 		pygame.init()
 		self.size = (width , height)
 		self.fontSize = font_size
-		self.resize = 1 #Alter this value to adjust text width relative to window width
+		self.resize = 0.9 #Alter this value to adjust text width relative to window width
 		self.win = pygame.display.set_mode(self.size,HWSURFACE|DOUBLEBUF|RESIZABLE)
 
 	def clearWin(self):
 		"""Clear text or image from screen
 		"""
-		self.win.fill(self.colorLib['B'])
+		self.win.fill(self.colorLib['N'])
 		pygame.display.flip()
 
 	def showText(self , txt , txtColor = 'W'):
@@ -47,12 +47,13 @@ class screen:
 		self.clearWin()
 		basicfont = pygame.font.SysFont(None, self.fontSize)
 		w, h = basicfont.size(txt) #get dimensions of font
-		lines = self.__wrapline(txt,basicfont,self.size[1]*self.resize) #gets lines of text that will be put up with text wraping engaged
+		lines = self.__wrapline(txt,basicfont,self.size[0]*self.resize) #gets lines of text that will be put up with text wraping engaged
 		for x in range(0,len(lines)): #places all lines on screen with text wrapping
 			text = basicfont.render(lines[x] , True , self.colorLib[txtColor], (0,0,0))
 			textRect = text.get_rect()
-			textRect.centerx = self.win.get_rect().centerx
-			textRect.centery = self.size[1]/3 + h * x # used to determine where to place the letters so that they aren't on top of each other, also starts text 1/3 down screen.
+			textRect.centerx = self.size[0]/2
+			#Determine line height: (center of line) = (middle of window) - (distance to center of first line) + (distance to center of current line from first line)
+			textRect.centery = (self.size[1]/2) - ((len(lines)-1)*h/2) + (h * x)
 			self.win.blit(text , textRect)
 		pygame.display.update() #updates window all at once
 		##--Un-comment the next three lines to enable text-to-speach----##
@@ -93,7 +94,7 @@ class screen:
 		"""
 		self.fontSize = newSize
 	
-	def setTextResize(size_multiplier = 1):
+	def setTextBuffer(size_multiplier = 0.9):
 		"""Change font width multiplier for text in the window
 		Should be used if window is resized after created
 		"""
@@ -130,8 +131,8 @@ class screen:
 def main():
 	port = 5678
 	defaultTimeout = 5
-	screenWidth = 1920
-	screenHeight = 1080
+	screenWidth = 800 #1920 (16:9 1080p)
+	screenHeight = 500 #1080
 	
 	fromClient = True
 	#If recieving commands from the terminal
