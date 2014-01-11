@@ -4,10 +4,10 @@
 ##-- Accepts commands for screen responses
 ##-- EV3- Remote - https://github.com/flyinactor91/EV3-Remote
 
-## 2014-01-01
+## 2014-01-11
 
 # Available Commands:
-#     Text:    T[R/G/O] text
+#     Text:    T(R/O/Y/G/B/P/def=W) text
 #     Image:   I fileName
 #     Clear:   C
 #     Quit:    QUIT
@@ -15,8 +15,7 @@
 # Example Command: TG Hello World!
 # Text color determined by letter following T (default is white)
 
-import os , pygame , sys
-from socket import *
+import os , pygame
 from pygame.locals import *
 from PIL import Image
 
@@ -129,6 +128,8 @@ class screen:
 		return wrapped
 
 def main():
+	import sys
+	from socket import *
 	port = 5678
 	defaultTimeout = 5
 	screenWidth = 800 #1920 (16:9 1080p)
@@ -159,7 +160,9 @@ def main():
 		#Command ident
 		try:
 			#Text
-			if msg[0] == 'T': disp.showText(msg[2:].strip(),msg[1].upper())
+			if msg[0] == 'T':
+				if msg[1] == ' ': disp.showText(msg[2:].strip())
+				else: disp.showText(msg[2:].strip(),msg[1].upper())
 			#Image
 			elif msg[0] == 'I': disp.showImg(msg[1:].strip())
 			#Clear
