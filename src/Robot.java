@@ -1,22 +1,10 @@
-import java.io.*;
-import java.net.Socket;
-import java.net.ServerSocket;
-import java.util.Scanner;
-import lejos.nxt.Button;
-import lejos.nxt.LCD;
-import lejos.nxt.Motor;
-import lejos.nxt.Sound;
-import lejos.nxt.LocalBattery;
-import lejos.util.Delay;
-
-
 /*
  * Michael duPont - flyinactor91.com
  * EV3-Remote - https://github.com/flyinactor91/EV3-Remote
  * Generic robot client
- * Lejos 0.4.0-alpha running on EV3
+ * Lejos 0.7.0-alpha running on EV3
  * 
- * 2014-01-02
+ * 2014-03-18
  * 
  * Commands recieved from Controller
  *     jrun Robot (-c)
@@ -30,8 +18,8 @@ import lejos.util.Delay;
  * 			Backward: 	B distance<int> (serial<def=Y /N>)
  * 			Left:		L degree<int> (serial< def=Y /N>)
  * 			Right:		R degree<int> (serial< def=Y /N>)
- * 			Servo:		S degree<int +/-> (serial< def=Y /N>)
- * 			MotorSpd:	MS motor<M/S> speed<int>				#Main (A and B) / Servo (C)
+ * 			Servo:		S motor<1/2> degree<int +/-> (serial< def=Y /N>)
+ * 			MotorSpd:	MS motor<M/S1/S2> speed<int>				#Main (A and B) / Servos (C and D)
  *		Sound
  * 			Volume:		VOL percent<int 0-100>					#Buzzer/TONE doesn't work if volume less than 8%
  * 			Tone:		TONE freq-Hz<int> duration-ms<int>
@@ -43,7 +31,7 @@ import lejos.util.Delay;
  * 			Battery:	BAT										#Displays the battery level (terminal/LCD)
  * 			Quit:		QUIT
  * 
- * Example: F 1000 N;LED 8;S 300;P 2000;L 220;B 300;S -300;BEEP 5;QUIT
+ * Example: F 1000 N;LED 8;S 1 300;P 2000;L 220;B 300;S 1 -300;BEEP 5;QUIT
  * 
  * Notes:
  * 		LED patterns:
@@ -54,10 +42,28 @@ import lejos.util.Delay;
  * 			4 = ascending beeps , 5 = descending beeps
  */
 
+import java.io.*;
+import java.net.Socket;
+import java.net.ServerSocket;
+import java.util.Scanner;
+import lejos.hardware.Button;
+import lejos.hardware.lcd.LCD;
+import lejos.hardware.port.MotorPort;
+import lejos.robotics.RegulatedMotor;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import lejos.hardware.Sound;
+import lejos.hardware.Battery;
+import lejos.utility.Delay;
 
 class Robot {
 	
 	static Boolean toLCD = true;
+	
+	static RegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
+	static RegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
+	static RegulatedMotor servo1 = new EV3MediumRegulatedMotor(MotorPort.C);
+	static RegulatedMotor servo2 = new EV3MediumRegulatedMotor(MotorPort.D);
 	
 	public static void printToLCD(String txt) {
 		LCD.clear();
@@ -69,23 +75,29 @@ class Robot {
 	public static void Move(String direction , int unit , boolean serial) {
 		System.out.println(direction + " " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(!serial));
 		if (toLCD) printToLCD(direction);
-		int APos = Motor.A.getTachoCount();
-		int BPos = Motor.B.getTachoCount();
-		int newAPos , newBPos;
-		if ((direction.equals("Forward")) || (direction.equals("Right"))) newAPos = APos + unit;
-		else newAPos = APos - unit;
-		if ((direction.equals("Forward")) || (direction.equals("Left"))) newBPos = BPos + unit;
-		else newBPos = BPos - unit;
-		Motor.A.rotateTo(newAPos , true);
-		Motor.B.rotateTo(newBPos , serial);
+		int LPos = leftMotor.getTachoCount();
+		int RPos = rightMotor.getTachoCount();
+		int newLPos , newRPos;
+		if ((direction.equals("Forward")) || (direction.equals("Right"))) newLPos = LPos + unit;
+		else newLPos = LPos - unit;
+		if ((direction.equals("Forward")) || (direction.equals("Left"))) newRPos = RPos + unit;
+		else newRPos = RPos - unit;
+		leftMotor.rotateTo(newLPos , true);
+		rightMotor.rotateTo(newRPos , serial);
 	}
 	
 	//Controls non-movement motor. Unit can be + or -
-	public static void Servo(int unit , boolean serial) {
-		System.out.println("Servo " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(!serial));
+	public static void Servo(int num , int unit , boolean serial) {
+		System.out.println("Servo " + Integer.toString(num) + "  " + Integer.toString(unit) + " units. Serial: " + Boolean.toString(!serial));
 		if (toLCD) printToLCD("Servo");
-		int CPos = Motor.C.getTachoCount();
-		Motor.C.rotateTo(CPos + unit , serial);
+		if (num == 1) {
+			int SPos = servo1.getTachoCount();
+			servo1.rotateTo(SPos + unit , serial);
+		}
+		else {
+			int SPos = servo2.getTachoCount();
+			servo2.rotateTo(SPos + unit , serial);
+		}
 	}
 	
     public static void main(String args[]) throws IOException {
@@ -109,9 +121,10 @@ class Robot {
         //Init Robot
         System.out.println("Running...");
 		LCD.drawString("EV3-Remote", 0, 0);
-		Motor.A.setSpeed(360);
-		Motor.B.setSpeed(360);
-		Motor.C.setSpeed(360);
+		leftMotor.setSpeed(360);
+		rightMotor.setSpeed(360);
+		servo1.setSpeed(360);
+		servo2.setSpeed(360);
 		
 		ServerSocket server = new ServerSocket(port); //Server is always init'd because compile will throw errors if only declared
 		if (fromClient) {
@@ -170,8 +183,8 @@ class Robot {
 					
 					//Servo
 					case "S":
-						if ((subCommand.length > 2) && (subCommand[2].equals("N"))) Servo(Integer.parseInt(subCommand[1]) , true);
-						else Servo(Integer.parseInt(subCommand[1]) , false);
+						if ((subCommand.length > 3) && (subCommand[3].equals("N"))) Servo(Integer.parseInt(subCommand[1]) , Integer.parseInt(subCommand[2]) , true);
+						else Servo(Integer.parseInt(subCommand[1]) , Integer.parseInt(subCommand[2]) , false);
 						break;
 					
 					//Set Motor Speed
@@ -179,10 +192,11 @@ class Robot {
 						System.out.println("Set motor " + subCommand[1] + " to " + subCommand[2]);
 						if (toLCD) printToLCD("Motor " + subCommand[1] + " " + subCommand[2]);
 						if (subCommand[1].equals("M")) {
-							Motor.A.setSpeed(Integer.parseInt(subCommand[2]));
-							Motor.B.setSpeed(Integer.parseInt(subCommand[2]));
+							leftMotor.setSpeed(Integer.parseInt(subCommand[2]));
+							rightMotor.setSpeed(Integer.parseInt(subCommand[2]));
 						}
-						else if (subCommand[1].equals("S")) Motor.C.setSpeed(Integer.parseInt(subCommand[2]));
+						else if (subCommand[1].equals("S1")) servo1.setSpeed(Integer.parseInt(subCommand[2]));
+						else if (subCommand[1].equals("S2")) servo2.setSpeed(Integer.parseInt(subCommand[2]));
 						break;
 					
 					//Pause
@@ -237,7 +251,7 @@ class Robot {
 					
 					//Get battery voltage
 					case "BAT":
-						LocalBattery battery = new LocalBattery();
+						Battery battery = new Battery();
 						String percent = Integer.toString((int)Math.round(battery.getVoltage() / 8.4 * 100)); //8.4 is the highest I could charge my battery. YMMV
 						System.out.println("Battery: " + percent + "%");
 						if (toLCD) printToLCD("Battery " + percent + "%");
