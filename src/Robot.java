@@ -2,9 +2,9 @@
  * Michael duPont - flyinactor91.com
  * EV3-Remote - https://github.com/flyinactor91/EV3-Remote
  * Generic robot client
- * Lejos 0.7.0-alpha running on EV3
+ * Lejos 0.8.0-alpha running on EV3
  * 
- * 2014-03-18
+ * 2014-04-08
  * 
  * Commands recieved from Controller
  *     jrun Robot (-c)
@@ -58,7 +58,7 @@ import lejos.utility.Delay;
 
 class Robot {
 	
-	static Boolean toLCD = true;
+	static Boolean toLCD = false;  //Printing to screen as is interferes with the new screen UI
 	
 	static RegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
 	static RegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.B);
@@ -120,7 +120,7 @@ class Robot {
         
         //Init Robot
         System.out.println("Running...");
-		LCD.drawString("EV3-Remote", 0, 0);
+		if (toLCD) printToLCD("EV3-Remote");
 		leftMotor.setSpeed(360);
 		rightMotor.setSpeed(360);
 		servo1.setSpeed(360);
